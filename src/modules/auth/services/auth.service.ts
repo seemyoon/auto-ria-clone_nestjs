@@ -7,4 +7,8 @@ export class AuthService {
   public async signUp(): Promise<void> {
     // permission admin to create manager
   }
+
+  public async logOut(): Promise<void> {}
+
+  public async refreshToken(): Promise<void> {}
 }

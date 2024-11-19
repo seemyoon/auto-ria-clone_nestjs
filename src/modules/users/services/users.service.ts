@@ -7,4 +7,6 @@ export class UsersService {
   public async getSeller(): Promise<void> {}
 
   public async bannedSeller(): Promise<void> {}
+
+  public async createAdmin(): Promise<void> {}
 }
