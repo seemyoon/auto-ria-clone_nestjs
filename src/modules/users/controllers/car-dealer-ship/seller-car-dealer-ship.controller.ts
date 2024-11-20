@@ -1,10 +1,12 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseUUIDPipe,
   Patch,
+  Post,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
@@ -42,5 +44,20 @@ export class SellerCarDealerShipController {
     @Body() dto: any,
   ): Promise<void> {
     await this.sellerCarDealerShipService.bannedSeller(userId, dto);
+  }
+
+  @ApiOperation({ deprecated: true })
+  @Post('subscribe')
+  public async subscribe(
+    // @CurrentUser('id') userId: string,
+    @Body() dto: any,
+  ): Promise<void> {
+    await this.sellerCarDealerShipService.subscribe(dto);
+  }
+
+  @ApiOperation({ deprecated: true })
+  @Delete('subscribe')
+  public async unsubscribe(): Promise<void> {
+    await this.sellerCarDealerShipService.unsubscribe();
   }
 }

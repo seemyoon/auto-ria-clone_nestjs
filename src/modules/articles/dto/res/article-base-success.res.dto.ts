@@ -1,9 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-import { UserResDto } from '../../../users/models/res/user.res.dto';
 import { CarResDto } from '../../../../models/res/car.res.dto';
+import { SellerResDto } from '../../../users/models/res/seller.res.dto';
 
-export class ArticleSuccessResDto {
+export class ArticleBaseSuccessResDto {
   @ApiProperty({
     example: '6744s24-5a28-a363-a5e1-023ae2e4780f',
     description: 'Article ID',
@@ -42,13 +42,9 @@ export class ArticleSuccessResDto {
 
   car?: CarResDto;
 
-  isFavourite: boolean;
-
   sellerType: string;
 
   profanityCheck?: boolean;
 
   numberOfViews?: number;
-
-  seller?: UserResDto;
 }

@@ -1,3 +1,5 @@
+import { ApiProperty } from '@nestjs/swagger';
+import { Transform, Type } from 'class-transformer';
 import {
   IsNotIn,
   IsOptional,
@@ -5,10 +7,9 @@ import {
   Length,
   Matches,
 } from 'class-validator';
-import { Transform, Type } from 'class-transformer';
+
 import { TransformHelper } from '../../../../common/helpers/transform.helper';
-import { ApiProperty } from '@nestjs/swagger';
-import { UserEnum } from '../../controllers/enum/users.enum';
+import { UserEnum } from '../../enum/users.enum';
 
 export class BaseUserReqDto {
   @ApiProperty({ example: 'John Doe' })
