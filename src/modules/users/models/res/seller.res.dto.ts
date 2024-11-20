@@ -11,7 +11,6 @@ export class SellerResDto extends PickType(BaseUserResDto, [
   'isPremium',
   'role',
   'deleted',
-  'banned',
   'created',
   'updated',
 ]) {}

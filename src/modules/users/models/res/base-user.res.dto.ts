@@ -10,7 +10,7 @@ export class BaseUserResDto {
   isPremium?: boolean;
   role: string;
   deleted?: Date;
-  banned?: boolean;
+  isBanned?: boolean;
   created: Date;
   updated: Date;
 }
