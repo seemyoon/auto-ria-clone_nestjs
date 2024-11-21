@@ -5,7 +5,7 @@ import { TableNameEnum } from '../enums/table-name.enum';
 import { CreateUpdateModel } from '../models/create-update.model';
 
 @Entity(TableNameEnum.SUBSCRIBE)
-export class RefreshTokenEntity extends CreateUpdateModel {
+export class SubscribeEntity extends CreateUpdateModel {
   @PrimaryGeneratedColumn('uuid')
   id: RefreshTokensID;
 

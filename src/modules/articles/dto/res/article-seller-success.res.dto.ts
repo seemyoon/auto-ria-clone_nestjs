@@ -1,6 +1,6 @@
-import { SellerResDto } from '../../../users/models/res/seller.res.dto';
+import { UserResDto } from '../../../users/models/res/user.res.dto';
 import { ArticleBaseSuccessResDto } from './article-base-success.res.dto';
 
 export class ArticleSellerSuccessResDto extends ArticleBaseSuccessResDto {
-  seller?: SellerResDto;
+  seller?: UserResDto;
 }

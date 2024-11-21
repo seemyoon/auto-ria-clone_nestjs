@@ -1,16 +1,18 @@
 import { ApiProperty } from '@nestjs/swagger';
 
+import { UserID } from '../../../../common/types/entity-ids.type';
+import { UserEnum } from '../../enum/users.enum';
+
 export class BaseUserResDto {
   @ApiProperty({ type: String })
-  id: string;
+  id: UserID;
   name: string;
   email: string;
-  password: string;
   image?: string;
   isPremium?: boolean;
-  role: string;
-  deleted?: Date;
+  role: UserEnum;
+  // deleted?: Date;
   isBanned?: boolean;
-  created: Date;
-  updated: Date;
+  // created: Date;
+  // updated: Date;
 }

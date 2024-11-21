@@ -1,6 +1,14 @@
-import { Controller, Delete, Post } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+import { CurrentUser } from '../decorators/current-user.decorator';
+import { SkipAuth } from '../decorators/skip-auth.decorator';
+import { JwtRefreshGuard } from '../guards/jwt-refresh.guard';
+import { IUserData } from '../interfaces/user-data.interface';
+import { SignInReqDto } from '../models/dto/request/sign-in.req.dto';
+import { SignUpReqDto } from '../models/dto/request/sign-up.req.dto';
+import { AuthResDto } from '../models/dto/response/auth.res.dto';
+import { TokenPairResDto } from '../models/dto/response/token-pair.res.dto';
 import { AuthService } from '../services/auth.service';
 
 @ApiTags('Auth')
@@ -8,23 +16,31 @@ import { AuthService } from '../services/auth.service';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post('sign-in')
-  public async signIn(): Promise<void> {
-    await this.authService.signIn();
+  @SkipAuth()
+  @Post('sing-in')
+  public async singIn(@Body() dto: SignInReqDto): Promise<AuthResDto> {
+    return await this.authService.signIn(dto);
   }
 
-  @Post('sign-up')
-  public async signUp(): Promise<void> {
-    await this.authService.signUp();
+  @SkipAuth()
+  @Post('sing-up')
+  public async singUp(@Body() dto: SignUpReqDto): Promise<AuthResDto> {
+    return await this.authService.signUp(dto);
   }
 
-  @Delete('log-out')
-  public async logOut(): Promise<void> {
-    await this.authService.logOut();
+  @ApiBearerAuth()
+  @Post('log-out')
+  public async signOut(@CurrentUser() userData: IUserData): Promise<void> {
+    return await this.authService.logOut(userData);
   }
 
-  @Post('refreshToken')
-  public async refreshToken(): Promise<void> {
-    await this.authService.refreshToken();
+  @SkipAuth()
+  @ApiBearerAuth()
+  @UseGuards(JwtRefreshGuard)
+  @Post('refresh')
+  public async refresh(
+    @CurrentUser() userData: IUserData,
+  ): Promise<TokenPairResDto> {
+    return await this.authService.refreshToken(userData);
   }
 }

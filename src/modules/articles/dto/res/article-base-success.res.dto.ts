@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 import { CarResDto } from '../../../../models/res/car.res.dto';
-import { SellerResDto } from '../../../users/models/res/seller.res.dto';
+import { UserResDto } from '../../../users/models/res/user.res.dto';
 
 export class ArticleBaseSuccessResDto {
   @ApiProperty({

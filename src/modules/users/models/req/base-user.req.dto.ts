@@ -42,5 +42,5 @@ export class BaseUserReqDto {
 
   @ApiProperty({ enum: UserEnum, example: UserEnum.SELLER })
   @IsString()
-  role: string;
+  role: UserEnum;
 }

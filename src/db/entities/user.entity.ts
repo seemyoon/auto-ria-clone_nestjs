@@ -1,9 +1,17 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 import { UserID } from '../../common/types/entity-ids.type';
 import { UserEnum } from '../../modules/users/enum/users.enum';
 import { TableNameEnum } from '../enums/table-name.enum';
 import { CreateUpdateModel } from '../models/create-update.model';
+import { RefreshTokenEntity } from './refresh-token.entity';
 
 @Entity(TableNameEnum.USERS)
 export class UserEntity extends CreateUpdateModel {
@@ -27,4 +35,10 @@ export class UserEntity extends CreateUpdateModel {
 
   @Column({ type: 'enum', enum: UserEnum })
   role: UserEnum;
+
+  @OneToMany(
+    () => RefreshTokenEntity,
+    (entity: RefreshTokenEntity) => entity.user,
+  )
+  refreshTokens?: RefreshTokenEntity[];
 }
