@@ -1,6 +1,5 @@
-import { UserEntity } from '../../../db/entities/user.entity';
+import { UserEntity } from '../../../database/entities/user.entity';
 import { IJwtPayload } from '../../auth/interfaces/jwt-payload.interface';
-import { IUserData } from '../../auth/interfaces/user-data.interface';
 import { UserResDto } from '../models/res/user.res.dto';
 
 export class UserMapper {
@@ -14,10 +13,7 @@ export class UserMapper {
     };
   }
 
-  public static toIUserData(
-    user: UserEntity,
-    jwtPayload: IJwtPayload,
-  ): IUserData {
+  public static toIUserData(user: UserEntity, jwtPayload: IJwtPayload): any {
     return {
       userId: user.id,
       deviceId: jwtPayload.deviceId,

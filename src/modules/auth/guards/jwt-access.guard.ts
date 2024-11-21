@@ -7,12 +7,12 @@ import {
 import { Reflector } from '@nestjs/core';
 import { IsNull } from 'typeorm';
 
-import { AuthCacheService } from '../../articles/services/auth-cache.service';
-import { TokenService } from '../../articles/services/token.service';
 import { UserRepository } from '../../repository/service/user.repository';
 import { UserMapper } from '../../users/mapper/user.mapper';
 import { SKIP_AUTH } from '../decorators/skip-auth.decorator';
 import { TokenType } from '../models/enums/token-type.enum';
+import { AuthCacheService } from '../services/auth-cache.service';
+import { TokenService } from '../services/token.service';
 
 @Injectable()
 export class JwtAccessGuard implements CanActivate {

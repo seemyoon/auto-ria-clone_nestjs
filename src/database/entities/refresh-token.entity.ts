@@ -24,9 +24,7 @@ export class RefreshTokenEntity extends CreateUpdateModel {
 
   @Column()
   user_id: UserID;
-  @ManyToOne(() => UserEntity, (entity: UserEntity) => entity.refreshTokens, {
-    onDelete: 'CASCADE',
-  })
+  @ManyToOne(() => UserEntity, (entity) => entity.refreshTokens)
   @JoinColumn({ name: 'user_id' })
   user?: UserEntity;
 }

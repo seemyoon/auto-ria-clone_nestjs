@@ -17,7 +17,7 @@ export class BaseUserReqDto {
   @Length(3, 50)
   @Transform(TransformHelper.toTrim)
   @Type(() => String)
-  name: string;
+  name?: string;
 
   @ApiProperty({ example: 'testuser@gmail.com' })
   @IsString()

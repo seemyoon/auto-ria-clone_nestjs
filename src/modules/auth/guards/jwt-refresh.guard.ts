@@ -5,11 +5,11 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 
-import { TokenService } from '../../articles/services/token.service';
 import { RefreshTokenRepository } from '../../repository/service/refresh-token.repository';
 import { UserRepository } from '../../repository/service/user.repository';
 import { UserMapper } from '../../users/mapper/user.mapper';
 import { TokenType } from '../models/enums/token-type.enum';
+import { TokenService } from '../services/token.service';
 
 @Injectable()
 export class JwtRefreshGuard implements CanActivate {

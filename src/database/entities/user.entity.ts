@@ -36,9 +36,6 @@ export class UserEntity extends CreateUpdateModel {
   @Column({ type: 'enum', enum: UserEnum })
   role: UserEnum;
 
-  @OneToMany(
-    () => RefreshTokenEntity,
-    (entity: RefreshTokenEntity) => entity.user,
-  )
+  @OneToMany(() => RefreshTokenEntity, (entity) => entity.user)
   refreshTokens?: RefreshTokenEntity[];
 }

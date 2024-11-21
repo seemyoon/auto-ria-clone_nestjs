@@ -15,10 +15,10 @@ async function bootstrap() {
     .setDescription('AutoRia clone API')
     .setVersion('1.0')
     .addBearerAuth({
-      in: 'header',
-      type: 'http',
-      scheme: 'bearer',
       bearerFormat: 'JWT',
+      in: 'header',
+      scheme: 'bearer',
+      type: 'http',
     })
     .build();
 

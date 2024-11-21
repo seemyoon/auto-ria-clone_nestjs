@@ -5,8 +5,6 @@ import {
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 
-import { AuthCacheService } from '../../articles/services/auth-cache.service';
-import { TokenService } from '../../articles/services/token.service';
 import { RefreshTokenRepository } from '../../repository/service/refresh-token.repository';
 import { UserRepository } from '../../repository/service/user.repository';
 import { UserMapper } from '../../users/mapper/user.mapper';
@@ -15,6 +13,8 @@ import { SignInReqDto } from '../models/dto/request/sign-in.req.dto';
 import { SignUpReqDto } from '../models/dto/request/sign-up.req.dto';
 import { AuthResDto } from '../models/dto/response/auth.res.dto';
 import { TokenPairResDto } from '../models/dto/response/token-pair.res.dto';
+import { AuthCacheService } from './auth-cache.service';
+import { TokenService } from './token.service';
 
 @Injectable()
 export class AuthService {

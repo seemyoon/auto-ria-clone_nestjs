@@ -30,7 +30,7 @@ export class AuthController {
 
   @ApiBearerAuth()
   @Post('log-out')
-  public async signOut(@CurrentUser() userData: IUserData): Promise<void> {
+  public async logOut(@CurrentUser() userData: IUserData): Promise<void> {
     return await this.authService.logOut(userData);
   }
 
