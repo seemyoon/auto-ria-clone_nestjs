@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
 import {
   IsEnum,
+  IsIn,
   IsNotIn,
   IsOptional,
   IsString,
@@ -46,6 +47,9 @@ export class BaseUserReqDto {
     example: UserEnum.SELLER,
   })
   @IsEnum(UserEnum, { message: 'Role must be a valid enum value' })
+  @IsIn([UserEnum.ADMIN, UserEnum.SELLER], {
+    message: 'Role must be ADMIN or SELLER',
+  })
   @IsString()
   role: UserEnum;
 }

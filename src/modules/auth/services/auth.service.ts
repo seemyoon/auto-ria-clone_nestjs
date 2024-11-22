@@ -1,13 +1,13 @@
 import {
   BadRequestException,
   Injectable,
-  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 
 import { RefreshTokenRepository } from '../../repository/service/refresh-token.repository';
 import { UserRepository } from '../../repository/service/user.repository';
+import { UserEnum } from '../../users/enum/users.enum';
 import { UserMapper } from '../../users/mapper/user.mapper';
 import { IUserData } from '../interfaces/user-data.interface';
 import { SignInReqDto } from '../models/dto/request/sign-in.req.dto';
@@ -27,12 +27,17 @@ export class AuthService {
   ) {}
 
   public async signUp(dto: SignUpReqDto): Promise<AuthResDto> {
-    // if (!dto.role) {
-    //   throw new NotFoundException('Role not found');
-    // }
-    // if (!Object.values(UserEnum).includes(dto.role)) {
-    //   throw new BadRequestException('Invalid role');
-    // }
+    if (![UserEnum.ADMIN, UserEnum.SELLER].includes(dto.role)) {
+      throw new BadRequestException('Invalid role');
+    }
+    if (dto.role === UserEnum.ADMIN) {
+      const adminExists = await this.userRepository.count({
+        where: { role: UserEnum.ADMIN },
+      });
+      if (adminExists > 0) {
+        throw new BadRequestException('Admin role already exists');
+      }
+    }
     await this.isEmailNotExistOrThrow(dto.email);
     const password = await bcrypt.hash(dto.password, 10);
     const user = await this.userRepository.save(
