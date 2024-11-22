@@ -7,9 +7,9 @@ export class UserResDto extends PickType(BaseUserResDto, [
   'name',
   'email',
   'image',
-  // 'isPremium',
+  'isPremium',
   'role',
-  // 'isBanned',
+  'isBanned',
   // 'created',
   // 'updated',
   // 'deleted'

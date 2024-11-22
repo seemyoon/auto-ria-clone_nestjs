@@ -1,17 +1,18 @@
 import {
   Column,
   Entity,
-  JoinColumn,
-  ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
 import { UserID } from '../../common/types/entity-ids.type';
+import { BannedEnum } from '../../modules/users/enum/banned.enum';
 import { UserEnum } from '../../modules/users/enum/users.enum';
 import { TableNameEnum } from '../enums/table-name.enum';
 import { CreateUpdateModel } from '../models/create-update.model';
 import { RefreshTokenEntity } from './refresh-token.entity';
+import { SubscribeEntity } from './subscribe.entity';
 
 @Entity(TableNameEnum.USERS)
 export class UserEntity extends CreateUpdateModel {
@@ -27,6 +28,9 @@ export class UserEntity extends CreateUpdateModel {
   @Column('text', { select: false })
   password: string;
 
+  @Column({ type: 'enum', enum: BannedEnum, default: BannedEnum.NOT_BANNED })
+  isBanned: BannedEnum;
+
   @Column('text', { nullable: true })
   image?: string;
 
@@ -35,6 +39,9 @@ export class UserEntity extends CreateUpdateModel {
 
   @Column({ type: 'enum', enum: UserEnum })
   role: UserEnum;
+
+  @OneToOne(() => SubscribeEntity, (entity) => entity.user)
+  subscribe?: SubscribeEntity;
 
   @OneToMany(() => RefreshTokenEntity, (entity) => entity.user)
   refreshTokens?: RefreshTokenEntity[];

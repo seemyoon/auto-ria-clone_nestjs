@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 import { UserID } from '../../../../common/types/entity-ids.type';
+import { BannedEnum } from '../../enum/banned.enum';
 import { UserEnum } from '../../enum/users.enum';
 
 export class BaseUserResDto {
@@ -10,9 +11,11 @@ export class BaseUserResDto {
   email: string;
   image?: string;
   isPremium?: boolean;
+  @ApiProperty({ enum: UserEnum, example: UserEnum.SELLER })
   role: UserEnum;
-  // deleted?: Date;
-  isBanned?: boolean;
-  // created: Date;
-  // updated: Date;
+  @ApiProperty({ enum: BannedEnum, example: BannedEnum.NOT_BANNED })
+  isBanned?: BannedEnum;
+  deleted?: Date;
+  created: Date;
+  updated: Date;
 }

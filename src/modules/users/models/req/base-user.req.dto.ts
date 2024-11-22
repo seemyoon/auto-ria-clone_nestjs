@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
 import {
+  IsEnum,
   IsNotIn,
   IsOptional,
   IsString,
@@ -40,7 +41,11 @@ export class BaseUserReqDto {
   @Length(0, 3000)
   image?: string;
 
-  @ApiProperty({ enum: UserEnum, example: UserEnum.SELLER })
+  @ApiProperty({
+    enum: UserEnum,
+    example: UserEnum.SELLER,
+  })
+  @IsEnum(UserEnum, { message: 'Role must be a valid enum value' })
   @IsString()
   role: UserEnum;
 }

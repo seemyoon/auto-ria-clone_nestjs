@@ -1,8 +1,15 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
-import { SubscribeID } from '../../common/types/entity-ids.type';
+import { SubscribeID, UserID } from '../../common/types/entity-ids.type';
 import { TableNameEnum } from '../enums/table-name.enum';
 import { CreateUpdateModel } from '../models/create-update.model';
+import { UserEntity } from './user.entity';
 
 @Entity(TableNameEnum.SUBSCRIBE)
 export class SubscribeEntity extends CreateUpdateModel {
@@ -11,4 +18,10 @@ export class SubscribeEntity extends CreateUpdateModel {
 
   @Column('text')
   subscriptionTime: Date;
+
+  @Column()
+  user_id: UserID;
+  @OneToOne(() => UserEntity, (entity) => entity.subscribe)
+  @JoinColumn({ name: 'user_id' })
+  user?: UserEntity;
 }

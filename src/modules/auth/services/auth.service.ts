@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
@@ -26,6 +27,12 @@ export class AuthService {
   ) {}
 
   public async signUp(dto: SignUpReqDto): Promise<AuthResDto> {
+    // if (!dto.role) {
+    //   throw new NotFoundException('Role not found');
+    // }
+    // if (!Object.values(UserEnum).includes(dto.role)) {
+    //   throw new BadRequestException('Invalid role');
+    // }
     await this.isEmailNotExistOrThrow(dto.email);
     const password = await bcrypt.hash(dto.password, 10);
     const user = await this.userRepository.save(

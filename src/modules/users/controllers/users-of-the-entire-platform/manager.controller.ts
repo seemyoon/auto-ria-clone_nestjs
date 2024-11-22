@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Patch, Post } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 import { ManagerService } from '../../services/users-of-the-entire-platform/manager.service';
@@ -11,6 +11,11 @@ export class ManagerController {
 
   @Post('createManager')
   public async createManager(@Body() dto: any): Promise<void> {
+    await this.managerService.createManager(dto);
+  }
+
+  @Patch('editMe')
+  public async editManager(@Body() dto: any): Promise<void> {
     await this.managerService.createManager(dto);
   }
 }

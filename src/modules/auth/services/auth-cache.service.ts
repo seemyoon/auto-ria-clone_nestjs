@@ -43,6 +43,6 @@ export class AuthCacheService {
   }
 
   protected getKey(userId: string, deviceId: string): string {
-    return `ACCESS_TOKEN:${userId}${deviceId}`;
+    return `ACCESS_TOKEN:${userId}:${deviceId}`;
   }
 }
