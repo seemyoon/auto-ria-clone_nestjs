@@ -3,7 +3,6 @@ import { Transform, Type } from 'class-transformer';
 import { IsInt, IsString, Length } from 'class-validator';
 
 import { TransformHelper } from '../../../../common/helpers/transform.helper';
-import { SellerEnum } from '../../../users/enum/seller.enum';
 
 export class BaseArticleReqDto {
   @ApiProperty({
@@ -60,7 +59,4 @@ export class BaseArticleReqDto {
     description: 'Model of the car',
   })
   model: string;
-
-  @ApiProperty({ enum: SellerEnum, example: SellerEnum.SELLER })
-  sellerType: string;
 }

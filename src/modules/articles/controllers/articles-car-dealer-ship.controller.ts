@@ -1,47 +1,43 @@
 import { Controller, Delete, Get, Patch, Post } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
-import { ArticleService } from '../services/articles.service';
+import { ArticlesCarDealerShipService } from '../services/articles-car-dealer-ship.service';
 
 @ApiBearerAuth()
 @ApiTags('CarArticleDealerShip (in future)')
 @Controller('article-car-dealership')
 export class ArticlesCarDealerShipController {
-  constructor(private readonly articleService: ArticleService) {}
+  constructor(
+    private readonly articlesCarDealerShipService: ArticlesCarDealerShipService,
+  ) {}
 
   @ApiOperation({ deprecated: true })
   @Get()
   public async getCarArticles(): Promise<void> {
-    await this.articleService.getCarArticles();
+    await this.articlesCarDealerShipService.getCarArticles();
   }
 
   @ApiOperation({ deprecated: true })
   @Get(':carArticleId')
   public async getCarArticle(): Promise<void> {
-    await this.articleService.getCarArticle();
+    await this.articlesCarDealerShipService.getCarArticle();
   }
 
   @ApiOperation({ deprecated: true })
   @Post()
   public async createCarArticle(): Promise<void> {
-    await this.articleService.createCarArticle();
+    await this.articlesCarDealerShipService.createCarArticle();
   }
 
   @ApiOperation({ deprecated: true })
   @Delete(':carArticleId')
   public async deleteCarArticle(): Promise<void> {
-    await this.articleService.deleteCarArticle();
+    await this.articlesCarDealerShipService.deleteCarArticle();
   }
 
   @ApiOperation({ deprecated: true })
   @Patch(':carArticleId')
   public async editCarArticle(): Promise<void> {
-    await this.articleService.editCarArticle();
-  }
-
-  @ApiOperation({ deprecated: true })
-  @Post(':carArticleId/favourite')
-  public async favouriteCarArticle(): Promise<void> {
-    await this.articleService.favouriteCarArticle();
+    await this.articlesCarDealerShipService.editCarArticle();
   }
 }

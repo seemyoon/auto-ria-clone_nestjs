@@ -60,4 +60,6 @@ export class SellerCarDealerShipController {
   public async unsubscribe(): Promise<void> {
     await this.sellerCarDealerShipService.unsubscribe();
   }
+
+  //toDo thinking about subscribe and unsubscribe for car-dealer-ship sellers
 }

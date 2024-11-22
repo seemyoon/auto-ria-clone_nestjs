@@ -7,4 +7,6 @@ export class AdminService {
   public async editAdmin(userId: string, dto: any): Promise<void> {}
 
   public async getAdmin(userId: string): Promise<void> {}
+
+  public async getSubscriptions(): Promise<void> {}
 }

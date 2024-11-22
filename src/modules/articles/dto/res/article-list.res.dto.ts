@@ -1,7 +1,7 @@
 import { ListArticleQueryDto } from '../req/list-article.query.dto';
-import { ArticleBaseSuccessResDto } from './article-base-success.res.dto';
+import { ArticleBaseResDto } from './article-base.res.dto';
 
 export class ArticleListResDto extends ListArticleQueryDto {
-  data: ArticleBaseSuccessResDto[];
+  data: ArticleBaseResDto[];
   total: number;
 }

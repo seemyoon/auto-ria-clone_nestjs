@@ -36,4 +36,11 @@ export class AdminController {
   public async createAdmin(@Body() dto: any): Promise<void> {
     await this.adminService.createAdmin(dto);
   }
+
+  @Get()
+  public async getSubscriptions(): Promise<void> {
+    await this.adminService.getSubscriptions();
+  }
+
+  //todo check full info about car-article
 }

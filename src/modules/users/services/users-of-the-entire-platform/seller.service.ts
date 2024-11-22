@@ -64,6 +64,7 @@ export class SellerService {
   }
 
   public async subscribe(userData: IUserData): Promise<void> {
+    //todo logic with expire subscription
     const subscribe = await this.subscribeRepository.findOneBy({
       user_id: userData.userId,
     });

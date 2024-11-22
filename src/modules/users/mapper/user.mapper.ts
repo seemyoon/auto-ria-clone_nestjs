@@ -13,6 +13,8 @@ export class UserMapper {
       name: user.name,
       image: `${user.image}`,
       role: user.role,
+      created: user.created,
+      updated: user.updated,
       isBanned: user.isBanned,
       isPremium: !!user.subscribe,
     };

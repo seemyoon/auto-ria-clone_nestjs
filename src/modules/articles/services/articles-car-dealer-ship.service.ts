@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
-export class ArticleService {
+export class ArticlesCarDealerShipService {
   public async getCarArticles(): Promise<void> {}
 
   public async getCarArticle(): Promise<void> {}

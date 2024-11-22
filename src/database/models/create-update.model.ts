@@ -1,4 +1,9 @@
+import { CreateDateColumn, UpdateDateColumn } from 'typeorm';
+
 export class CreateUpdateModel {
-  createdAt: Date;
-  updatedAt: Date;
+  @CreateDateColumn()
+  created: Date;
+
+  @UpdateDateColumn()
+  updated: Date;
 }

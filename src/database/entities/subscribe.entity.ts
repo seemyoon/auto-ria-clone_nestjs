@@ -16,9 +16,6 @@ export class SubscribeEntity extends CreateUpdateModel {
   @PrimaryGeneratedColumn('uuid')
   id: SubscribeID;
 
-  @Column('text')
-  subscriptionTime: Date;
-
   @Column()
   user_id: UserID;
   @OneToOne(() => UserEntity, (entity) => entity.subscribe)

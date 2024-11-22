@@ -1,9 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-import { CarResDto } from '../../../../models/res/car.res.dto';
-import { UserResDto } from '../../../users/models/res/user.res.dto';
+import { CarResDto } from '../../../cars/dto/res/car.res.dto';
+import { SellerEnum } from '../../../users/enum/seller.enum';
 
-export class ArticleBaseSuccessResDto {
+export class ArticleBaseResDto {
   @ApiProperty({
     example: '6744s24-5a28-a363-a5e1-023ae2e4780f',
     description: 'Article ID',
@@ -40,11 +40,10 @@ export class ArticleBaseSuccessResDto {
   })
   updated: Date;
 
+  @ApiProperty({ enum: SellerEnum, example: SellerEnum.SELLER })
+  sellerType?: SellerEnum;
+
   car?: CarResDto;
 
-  sellerType: string;
-
   profanityCheck?: boolean;
-
-  numberOfViews?: number;
 }

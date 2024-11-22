@@ -6,6 +6,8 @@ import { GlobalExceptionFilter } from './common/filters/global-exception.filter'
 import configuration from './configs/configuration';
 import { ArticlesModule } from './modules/articles/articles.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { CarRegionsModule } from './modules/car-regions/car-regions.module';
+import { CarsModule } from './modules/cars/cars.module';
 import { LoggerModule } from './modules/logger/logger.module';
 import { PostgresModule } from './modules/postgres/postgres.module';
 import { RedisModule } from './modules/redis/redis.module';
@@ -25,6 +27,8 @@ import { UsersModule } from './modules/users/users.module';
     RepositoryModule,
     RedisModule,
     LoggerModule,
+    CarsModule,
+    CarRegionsModule,
   ],
   providers: [
     {

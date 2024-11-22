@@ -11,6 +11,7 @@ import { BannedEnum } from '../../modules/users/enum/banned.enum';
 import { UserEnum } from '../../modules/users/enum/users.enum';
 import { TableNameEnum } from '../enums/table-name.enum';
 import { CreateUpdateModel } from '../models/create-update.model';
+import { ArticleEntity } from './article.entity';
 import { RefreshTokenEntity } from './refresh-token.entity';
 import { SubscribeEntity } from './subscribe.entity';
 
@@ -39,6 +40,9 @@ export class UserEntity extends CreateUpdateModel {
 
   @Column({ type: 'enum', enum: UserEnum })
   role: UserEnum;
+
+  @OneToMany(() => ArticleEntity, (entity) => entity.user)
+  articles?: ArticleEntity[];
 
   @OneToOne(() => SubscribeEntity, (entity) => entity.user)
   subscribe?: SubscribeEntity;

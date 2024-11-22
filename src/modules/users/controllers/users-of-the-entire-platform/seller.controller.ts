@@ -58,11 +58,13 @@ export class SellerController {
     return UserMapper.toResDtoList(entities, total, query);
   }
 
+  @ApiBearerAuth()
   @Post('subscribe')
   public async subscribe(@CurrentUser() userData: IUserData): Promise<void> {
     await this.sellerService.subscribe(userData);
   }
 
+  @ApiBearerAuth()
   @Delete('subscribe')
   public async unsubscribe(@CurrentUser() userData: IUserData): Promise<void> {
     await this.sellerService.unsubscribe(userData);
@@ -80,6 +82,7 @@ export class SellerController {
     );
   }
 
+  @ApiBearerAuth()
   @Patch(':sellerId/banned')
   public async banOrUnbanUser(
     @Param('id', ParseUUIDPipe) userId: string,
@@ -88,6 +91,7 @@ export class SellerController {
     await this.sellerService.banOrUnbanUser(userId, dto.isBanned);
   }
 
+  @SkipAuth()
   @Get(':sellerId')
   public async getSeller(
     @Param('id', ParseUUIDPipe) userId: string,
