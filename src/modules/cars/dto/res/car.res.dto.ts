@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 import { ArticleSellerBaseResDto } from '../../../articles/dto/res/article-seller-base-res.dto';
-import { CarResRegionsDto } from '../../../region/dto/res/region.res.dto';
+import { RegionResDto } from '../../../region/dto/res/region.res.dto';
 
 export class CarResDto {
   @ApiProperty({
@@ -46,7 +46,7 @@ export class CarResDto {
   })
   updated: Date;
 
-  region?: CarResRegionsDto[];
+  region?: RegionResDto[];
 
   articles?: ArticleSellerBaseResDto[];
 }

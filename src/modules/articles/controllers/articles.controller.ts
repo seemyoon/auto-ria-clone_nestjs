@@ -23,9 +23,8 @@ import { ArticleSellerPremiumResDto } from '../dto/res/article-seller-premium.re
 import { ArticleMapper } from '../mapper/article.mapper';
 import { ArticleService } from '../services/articles.service';
 
-@ApiBearerAuth()
 @ApiTags('Articles')
-@Controller('article')
+@Controller('articles')
 export class ArticlesController {
   constructor(private readonly articleService: ArticleService) {}
 
@@ -36,16 +35,6 @@ export class ArticlesController {
   ): Promise<ArticleListResDto> {
     const [entities, total] = await this.articleService.getArticles(query);
     return ArticleMapper.toResDtoList(entities, total, query);
-  }
-
-  @SkipAuth()
-  @Get(':articleId')
-  public async getArticle(
-    @Param('articleId', ParseUUIDPipe) articleId: ArticleID,
-  ): Promise<ArticleSellerBaseResDto> {
-    return ArticleMapper.toBaseResDto(
-      await this.articleService.getArticle(articleId),
-    );
   }
 
   @ApiBearerAuth()
@@ -59,13 +48,14 @@ export class ArticlesController {
     );
   }
 
-  @ApiBearerAuth()
-  @Get(':articleId/premiumInfo')
-  public async getPremiumInfo(
-    @CurrentUser() userData: IUserData,
+  @SkipAuth()
+  @Get(':articleId')
+  public async getArticle(
     @Param('articleId', ParseUUIDPipe) articleId: ArticleID,
-  ): Promise<ArticleSellerPremiumResDto> {
-    return await this.articleService.getPremiumInfoArticle(userData, articleId);
+  ): Promise<ArticleSellerBaseResDto> {
+    return ArticleMapper.toBaseResDto(
+      await this.articleService.getArticle(articleId),
+    );
   }
 
   @ApiBearerAuth()
@@ -83,5 +73,14 @@ export class ArticlesController {
   ): Promise<void> {
     // todo ArticleSellerResDto
     await this.articleService.editArticle();
+  }
+
+  @ApiBearerAuth()
+  @Get(':articleId/premiumInfo')
+  public async getPremiumInfo(
+    @CurrentUser() userData: IUserData,
+    @Param('articleId', ParseUUIDPipe) articleId: ArticleID,
+  ): Promise<ArticleSellerPremiumResDto> {
+    return await this.articleService.getPremiumInfoArticle(userData, articleId);
   }
 }

@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 
 import { RegionController } from './controllers/region.controller';
-import { RegionsService } from './services/regions.service';
+import { RegionService } from './services/region.service';
 
 @Module({
   controllers: [RegionController],
-  providers: [RegionsService], //todo CarsDealerShip
+  providers: [RegionService], //todo CarsDealerShip
 })
-export class RegionsModule {}
+export class RegionModule {}

@@ -11,7 +11,7 @@ export class RegionEntity extends CreateUpdateModel {
   id: RegionID;
 
   @Column('text')
-  region: string;
+  place: string;
 
   @OneToMany(() => ArticleEntity, (article) => article.region)
   articles: ArticleEntity[];

@@ -15,19 +15,7 @@ export class RegionResDto {
 
   @ApiProperty({
     example: null,
-    description: 'Deleted timestamp of the car, if deleted',
+    description: 'When the region was removed',
   })
   deleted?: Date | null;
-
-  @ApiProperty({
-    example: '2021-09-29T10:00:00.000Z',
-    description: 'Created field',
-  })
-  created: Date;
-
-  @ApiProperty({
-    example: '2021-09-29T10:00:00.000Z',
-    description: 'Updated field',
-  })
-  updated: Date;
 }

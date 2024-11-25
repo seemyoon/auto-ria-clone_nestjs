@@ -19,7 +19,7 @@ import { CarEntity } from './car.entity';
 import { RegionEntity } from './region.entity';
 import { UserEntity } from './user.entity';
 
-@Entity(TableNameEnum.CAR_ARTICLES)
+@Entity(TableNameEnum.ARTICLES)
 export class ArticleEntity extends CreateUpdateModel {
   @PrimaryGeneratedColumn('uuid')
   id: ArticleID;

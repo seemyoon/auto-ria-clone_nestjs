@@ -10,7 +10,7 @@ import { CarsModule } from './modules/cars/cars.module';
 import { LoggerModule } from './modules/logger/logger.module';
 import { PostgresModule } from './modules/postgres/postgres.module';
 import { RedisModule } from './modules/redis/redis.module';
-import { RegionsModule } from './modules/region/regions.module';
+import { RegionModule } from './modules/region/region.module';
 import { RepositoryModule } from './modules/repository/repository.module';
 import { UsersModule } from './modules/users/users.module';
 
@@ -28,7 +28,7 @@ import { UsersModule } from './modules/users/users.module';
     RedisModule,
     LoggerModule,
     CarsModule,
-    RegionsModule,
+    RegionModule,
   ],
   providers: [
     {
