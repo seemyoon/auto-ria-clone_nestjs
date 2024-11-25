@@ -5,6 +5,6 @@ import { RegionService } from './services/region.service';
 
 @Module({
   controllers: [RegionController],
-  providers: [RegionService], //todo CarsDealerShip
+  providers: [RegionService],
 })
 export class RegionModule {}
