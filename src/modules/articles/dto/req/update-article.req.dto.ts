@@ -9,4 +9,5 @@ export class UpdateArticleReqDto extends PickType(BaseArticleReqDto, [
   'model',
   'brand',
   'cost',
+  'region',
 ]) {}

@@ -48,8 +48,12 @@ export class BaseArticleReqDto {
   })
   cost: number;
 
-  @Transform(TransformHelper.toTrim)
+  @Type(() => String)
   @IsString()
+  @ApiProperty({
+    example: 'Kyiv',
+    description: 'Region of the car',
+  })
   region: string;
 
   @Type(() => String)

@@ -6,11 +6,17 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import { ArticleID, CarID, UserID } from '../../common/types/entity-ids.type';
+import {
+  ArticleID,
+  CarID,
+  RegionID,
+  UserID,
+} from '../../common/types/entity-ids.type';
 import { SellerEnum } from '../../modules/users/enum/seller.enum';
 import { TableNameEnum } from '../enums/table-name.enum';
 import { CreateUpdateModel } from '../models/create-update.model';
 import { CarEntity } from './car.entity';
+import { RegionEntity } from './region.entity';
 import { UserEntity } from './user.entity';
 
 @Entity(TableNameEnum.CAR_ARTICLES)
@@ -27,11 +33,11 @@ export class ArticleEntity extends CreateUpdateModel {
   @Column('text', { nullable: true })
   body?: string;
 
-  @Column('int', { nullable: true })
-  numberOfViews?: number;
-
   @Column({ type: 'enum', enum: SellerEnum })
   sellerType?: SellerEnum;
+
+  @Column('decimal', { precision: 10 })
+  cost: number;
 
   @Column()
   user_id: UserID;
@@ -44,4 +50,10 @@ export class ArticleEntity extends CreateUpdateModel {
   @ManyToOne(() => CarEntity, (entity) => entity.articles)
   @JoinColumn({ name: 'car_id' })
   car?: CarEntity;
+
+  @Column()
+  region_id: RegionID;
+  @ManyToOne(() => RegionEntity, (region) => region.articles)
+  @JoinColumn({ name: 'region_id' })
+  region?: RegionEntity;
 }

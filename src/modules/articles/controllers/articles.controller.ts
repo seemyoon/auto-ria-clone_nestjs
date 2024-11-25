@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Delete,
   Get,
@@ -10,61 +11,75 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+import { ArticleID } from '../../../common/types/entity-ids.type';
+import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 import { SkipAuth } from '../../auth/decorators/skip-auth.decorator';
+import { IUserData } from '../../auth/interfaces/user-data.interface';
 import { ListUsersQueryDto } from '../../users/models/req/list-users.query.dto';
+import { BaseArticleReqDto } from '../dto/req/article.req.dto';
+import { ArticleSellerBaseResDto } from '../dto/res/article-seller-base-res.dto';
+import { ArticleSellerPremiumResDto } from '../dto/res/article-seller-premium.res.dto';
+import { ArticleMapper } from '../mapper/article.mapper';
 import { ArticleService } from '../services/articles.service';
 
 @ApiBearerAuth()
-@ApiTags('CarArticle')
-@Controller('carArticle')
+@ApiTags('Articles')
+@Controller('article')
 export class ArticlesController {
   constructor(private readonly articleService: ArticleService) {}
 
   @SkipAuth()
   @Get()
-  public async getCarArticles(
-    @Query() query: ListUsersQueryDto,
-  ): Promise<void> {
+  public async getArticles(@Query() query: ListUsersQueryDto): Promise<void> {
     // todo ArticleListResDto
-    // const [entities, total] = await this.articleService.getCarArticles();
+    // const [entities, total] = await this.articleService.get Articles();
     // return UserMapper.toResDtoList(entities, total, query);
   }
 
   @SkipAuth()
-  @Get(':carArticleId')
-  public async getCarArticle(
-    @Param('id', ParseUUIDPipe) userId: string,
-  ): Promise<void> {
-    // todo ArticleSellerResDto
-    await this.articleService.getCarArticle();
+  @Get(':articleId')
+  public async getArticle(
+    @Param('articleId', ParseUUIDPipe) articleId: ArticleID,
+  ): Promise<ArticleSellerBaseResDto> {
+    return ArticleMapper.toBaseResDto(
+      await this.articleService.getArticle(articleId),
+    );
   }
 
+  @ApiBearerAuth()
   @Post()
-  public async createCarArticle(): Promise<void> {
-    // todo ArticleSellerResDto
-    await this.articleService.createCarArticle();
+  public async createArticle(
+    @CurrentUser() userData: IUserData,
+    @Body() dto: BaseArticleReqDto,
+  ): Promise<ArticleSellerBaseResDto> {
+    return ArticleMapper.toBaseResDto(
+      await this.articleService.createArticle(userData, dto),
+    );
   }
 
-  @Delete(':carArticleId')
-  public async deleteCarArticle(
+  @ApiBearerAuth()
+  @Get(':articleId/premiumInfo')
+  public async getPremiumInfo(
+    @CurrentUser() userData: IUserData,
+    @Param('articleId', ParseUUIDPipe) articleId: ArticleID,
+  ): Promise<ArticleSellerPremiumResDto> {
+    return await this.articleService.getPremiumInfoArticle(userData, articleId);
+  }
+
+  @ApiBearerAuth()
+  @Delete(':articleId')
+  public async deleteArticle(
+    @Param('id', ParseUUIDPipe) userId: string,
+  ): Promise<void> {
+    await this.articleService.deleteArticle();
+  }
+
+  @ApiBearerAuth()
+  @Patch(':articleId')
+  public async editArticle(
     @Param('id', ParseUUIDPipe) userId: string,
   ): Promise<void> {
     // todo ArticleSellerResDto
-    await this.articleService.deleteCarArticle();
+    await this.articleService.editArticle();
   }
-
-  @Patch(':carArticleId')
-  public async editCarArticle(
-    @Param('id', ParseUUIDPipe) userId: string,
-  ): Promise<void> {
-    // todo ArticleSellerResDto
-    await this.articleService.editCarArticle();
-  }
-
-  // @Post(':carArticleId/favourite')
-  // public async favouriteCarArticle(
-  //   @Param('id', ParseUUIDPipe) userId: string,
-  // ): Promise<void> {
-  //   await this.articleService.favouriteCarArticle();
-  // } // todo if i have time
 }

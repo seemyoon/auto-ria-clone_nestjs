@@ -15,7 +15,7 @@ export class CarMapper {
       created: data.created,
       updated: data.updated,
       articles: data.articles
-        ? data.articles.map((article) => ArticleMapper.toResDto(article))
+        ? data.articles.map((article) => ArticleMapper.toBaseResDto(article))
         : [],
     };
   }

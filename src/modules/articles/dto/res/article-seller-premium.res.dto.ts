@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-import { ArticleBaseResDto } from './article-base.res.dto';
+import { ArticleSellerBaseResDto } from './article-seller-base-res.dto';
 
-export class ArticlePremiumResDto extends ArticleBaseResDto {
+export class ArticleSellerPremiumResDto extends ArticleSellerBaseResDto {
   @ApiProperty({
     example: 123,
     description: 'Number of views',

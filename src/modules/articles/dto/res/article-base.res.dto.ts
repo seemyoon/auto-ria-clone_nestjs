@@ -1,6 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Transform, Type } from 'class-transformer';
+import { IsInt, IsString } from 'class-validator';
 
+import { TransformHelper } from '../../../../common/helpers/transform.helper';
 import { CarResDto } from '../../../cars/dto/res/car.res.dto';
+import { RegionResDto } from '../../../region/dto/res/region.res.dto';
 import { SellerEnum } from '../../../users/enum/seller.enum';
 
 export class ArticleBaseResDto {
@@ -28,6 +32,16 @@ export class ArticleBaseResDto {
   })
   body: string;
 
+  region?: RegionResDto;
+
+  @Transform(TransformHelper.toTrim)
+  @IsInt()
+  @ApiProperty({
+    example: 200000,
+    description: 'Price of the car',
+  })
+  cost: number;
+
   @ApiProperty({
     example: '2021-09-29T10:00:00.000Z',
     description: 'Created field',
@@ -45,5 +59,5 @@ export class ArticleBaseResDto {
 
   car?: CarResDto;
 
-  profanityCheck?: boolean;
+  // profanityCheck?: boolean;
 }

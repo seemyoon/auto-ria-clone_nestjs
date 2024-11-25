@@ -1,10 +1,28 @@
-import { Controller, Delete, Get, Patch, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
+import { ArticleID } from '../../../common/types/entity-ids.type';
+import { CurrentUser } from '../../auth/decorators/current-user.decorator';
+import { SkipAuth } from '../../auth/decorators/skip-auth.decorator';
+import { IUserData } from '../../auth/interfaces/user-data.interface';
+import { ListUsersQueryDto } from '../../users/models/req/list-users.query.dto';
+import { BaseArticleReqDto } from '../dto/req/article.req.dto';
+import { ArticleSellerBaseResDto } from '../dto/res/article-seller-base-res.dto';
+import { ArticleMapper } from '../mapper/article.mapper';
 import { ArticlesCarDealerShipService } from '../services/articles-car-dealer-ship.service';
 
 @ApiBearerAuth()
-@ApiTags('CarArticleDealerShip (in future)')
+@ApiTags('ArticleDealerShip (in future)')
 @Controller('article-car-dealership')
 export class ArticlesCarDealerShipController {
   constructor(
@@ -12,32 +30,49 @@ export class ArticlesCarDealerShipController {
   ) {}
 
   @ApiOperation({ deprecated: true })
+  @SkipAuth()
   @Get()
-  public async getCarArticles(): Promise<void> {
-    await this.articlesCarDealerShipService.getCarArticles();
+  public async getArticles(@Query() query: ListUsersQueryDto): Promise<void> {}
+
+  @ApiOperation({ deprecated: true })
+  @SkipAuth()
+  @Get(':articleId')
+  public async getArticle(
+    @Param('articleId', ParseUUIDPipe) articleId: ArticleID,
+  ): Promise<ArticleSellerBaseResDto> {
+    return ArticleMapper.toBaseResDto(
+      await this.articlesCarDealerShipService.getArticle(articleId),
+    );
   }
 
   @ApiOperation({ deprecated: true })
-  @Get(':carArticleId')
-  public async getCarArticle(): Promise<void> {
-    await this.articlesCarDealerShipService.getCarArticle();
-  }
-
-  @ApiOperation({ deprecated: true })
+  @ApiBearerAuth()
   @Post()
-  public async createCarArticle(): Promise<void> {
-    await this.articlesCarDealerShipService.createCarArticle();
+  public async createArticle(
+    @CurrentUser() userData: IUserData,
+    @Body() dto: BaseArticleReqDto,
+  ): Promise<ArticleSellerBaseResDto> {
+    return ArticleMapper.toBaseResDto(
+      await this.articlesCarDealerShipService.createArticle(userData, dto),
+    );
   }
 
   @ApiOperation({ deprecated: true })
-  @Delete(':carArticleId')
-  public async deleteCarArticle(): Promise<void> {
-    await this.articlesCarDealerShipService.deleteCarArticle();
+  @ApiBearerAuth()
+  @Delete(':articleId')
+  public async deleteArticle(
+    @Param('id', ParseUUIDPipe) userId: string,
+  ): Promise<void> {
+    await this.articlesCarDealerShipService.deleteArticle();
   }
 
   @ApiOperation({ deprecated: true })
-  @Patch(':carArticleId')
-  public async editCarArticle(): Promise<void> {
-    await this.articlesCarDealerShipService.editCarArticle();
+  @ApiBearerAuth()
+  @Patch(':articleId')
+  public async editArticle(
+    @Param('id', ParseUUIDPipe) userId: string,
+  ): Promise<void> {
+    // todo ArticleSellerResDto
+    await this.articlesCarDealerShipService.editArticle();
   }
 }

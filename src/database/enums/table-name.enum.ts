@@ -3,7 +3,7 @@ export enum TableNameEnum {
   USERS = 'users',
   CAR_ARTICLES = 'car_articles',
   CAR = 'car',
-  CAR_REGIONS = 'car_regions',
+  CAR_REGION = 'car_region',
   CAR_DEALER_SHIP = 'car_dealer_ship',
   SUBSCRIBE = 'subscribe',
 }

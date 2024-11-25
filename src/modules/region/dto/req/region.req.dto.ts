@@ -4,7 +4,7 @@ import { IsString } from 'class-validator';
 
 import { TransformHelper } from '../../../../common/helpers/transform.helper';
 
-export class CarRegionReqDto {
+export class RegionReqDto {
   @Type(() => String)
   @Transform(TransformHelper.toTrim)
   @IsString()
