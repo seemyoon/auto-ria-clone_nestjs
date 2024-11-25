@@ -17,6 +17,7 @@ import { SkipAuth } from '../../auth/decorators/skip-auth.decorator';
 import { IUserData } from '../../auth/interfaces/user-data.interface';
 import { ListUsersQueryDto } from '../../users/models/req/list-users.query.dto';
 import { BaseArticleReqDto } from '../dto/req/article.req.dto';
+import { ArticleListResDto } from '../dto/res/article-list.res.dto';
 import { ArticleSellerBaseResDto } from '../dto/res/article-seller-base-res.dto';
 import { ArticleSellerPremiumResDto } from '../dto/res/article-seller-premium.res.dto';
 import { ArticleMapper } from '../mapper/article.mapper';
@@ -30,10 +31,11 @@ export class ArticlesController {
 
   @SkipAuth()
   @Get()
-  public async getArticles(@Query() query: ListUsersQueryDto): Promise<void> {
-    // todo ArticleListResDto
-    // const [entities, total] = await this.articleService.get Articles();
-    // return UserMapper.toResDtoList(entities, total, query);
+  public async getArticles(
+    @Query() query: ListUsersQueryDto,
+  ): Promise<ArticleListResDto> {
+    const [entities, total] = await this.articleService.getArticles(query);
+    return ArticleMapper.toResDtoList(entities, total, query);
   }
 
   @SkipAuth()

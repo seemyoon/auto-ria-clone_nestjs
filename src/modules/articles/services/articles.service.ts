@@ -6,6 +6,7 @@ import { IUserData } from '../../auth/interfaces/user-data.interface';
 import { ArticleRepository } from '../../repository/service/article.repository';
 import { CarRepository } from '../../repository/service/car.repository';
 import { RegionRepository } from '../../repository/service/region.repository';
+import { ListUsersQueryDto } from '../../users/models/req/list-users.query.dto';
 import { BaseArticleReqDto } from '../dto/req/article.req.dto';
 import { ArticleSellerPremiumResDto } from '../dto/res/article-seller-premium.res.dto';
 import { ArticleMapper } from '../mapper/article.mapper';
@@ -18,10 +19,14 @@ export class ArticleService {
     private readonly carRepository: CarRepository,
   ) {}
 
-  public async getArticles(articleId: ArticleID): Promise<void> {}
+  public async getArticles(
+    query: ListUsersQueryDto,
+  ): Promise<[ArticleEntity[], number]> {
+    return await this.articleRepository.findAll(query);
+  }
 
   public async getArticle(articleId: ArticleID): Promise<ArticleEntity> {
-    return await this.articleRepository.findOne({ where: { id: articleId } });
+    return await this.articleRepository.findByArticleId(articleId);
   }
 
   public async createArticle(

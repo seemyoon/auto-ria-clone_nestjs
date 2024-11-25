@@ -1,7 +1,7 @@
 import { ListArticlesQueryDto } from '../req/list-articles-query.dto';
-import { ArticleBaseResDto } from './article-base.res.dto';
+import { ArticleSellerBaseResDto } from './article-seller-base-res.dto';
 
 export class ArticleListResDto extends ListArticlesQueryDto {
-  data: ArticleBaseResDto[];
+  data: ArticleSellerBaseResDto[];
   total: number;
 }

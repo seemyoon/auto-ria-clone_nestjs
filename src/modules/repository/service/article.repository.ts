@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { DataSource, Repository } from 'typeorm';
+import { Brackets, DataSource, Repository } from 'typeorm';
 
 import { ArticleID } from '../../../common/types/entity-ids.type';
 import { ArticleEntity } from '../../../database/entities/article.entity';
+import { ListArticlesQueryDto } from '../../articles/dto/req/list-articles-query.dto';
 
 @Injectable()
 export class ArticleRepository extends Repository<ArticleEntity> {
@@ -10,54 +11,89 @@ export class ArticleRepository extends Repository<ArticleEntity> {
     super(ArticleEntity, dataSource.manager);
   }
 
+  public async findAll(
+    query: ListArticlesQueryDto,
+  ): Promise<[ArticleEntity[], number]> {
+    const qb = this.createQueryBuilder('article');
+    qb.leftJoinAndSelect('article.user', 'user');
+    qb.leftJoinAndSelect('article.car', 'car');
+    qb.leftJoinAndSelect('article.region', 'region');
+
+    if (query.search) {
+      qb.andWhere(
+        new Brackets((qb1) => {
+          qb1
+            .where('CONCAT(article.title, article.description) ILIKE :search')
+            .orWhere('car.brand ILIKE :search')
+            .orWhere('car.model ILIKE :search');
+        }),
+      );
+      qb.setParameter('search', `%${query.search}%`);
+    }
+    qb.take(query.limit);
+    qb.skip(query.offset);
+
+    return await qb.getManyAndCount();
+  }
+
+  public async findByArticleId(articleId: ArticleID): Promise<ArticleEntity> {
+    const qb = this.createQueryBuilder('article');
+    qb.leftJoinAndSelect('article.user', 'user');
+    qb.leftJoinAndSelect('article.car', 'car');
+    qb.leftJoinAndSelect('article.region', 'region');
+
+    qb.where('article.id = :articleId', { articleId });
+    return await qb.getOne();
+  }
+
   public async getNumberOfViews(articleId: ArticleID): Promise<number> {
-    const result = await this.createQueryBuilder('article')
+    const qb = await this.createQueryBuilder('article')
       .select('SUM(views)', 'numberOfViews')
       .where('article.id = :articleId', { articleId })
       .getRawOne();
-    return result?.numberOfViews || 0;
+    return qb?.numberOfViews || 0;
   }
 
   public async getDailyViews(articleId: ArticleID): Promise<number> {
-    const result = await this.createQueryBuilder('article')
+    const qb = await this.createQueryBuilder('article')
       .select('SUM(views)', 'dailyViews')
       .where('article.id = :articleId', { articleId })
       .andWhere('DATE(article.viewedAt) = CURDATE()')
       .getRawOne();
-    return result?.dailyViews || 0;
+    return qb?.dailyViews || 0;
   }
 
   public async getWeeklyViews(articleId: ArticleID): Promise<number> {
-    const result = await this.createQueryBuilder('article')
+    const qb = await this.createQueryBuilder('article')
       .select('SUM(views)', 'weeklyViews')
       .where('article.id = :articleId', { articleId })
       .andWhere('YEARWEEK(article.viewedAt, 1) = YEARWEEK(CURDATE(), 1)')
       .getRawOne();
-    return result?.weeklyViews || 0;
+    return qb?.weeklyViews || 0;
   }
 
   public async getMonthlyViews(articleId: ArticleID): Promise<number> {
-    const result = await this.createQueryBuilder('article')
+    const qb = await this.createQueryBuilder('article')
       .select('SUM(views)', 'monthlyViews')
       .where('article.id = :articleId', { articleId })
       .andWhere('MONTH(article.viewedAt) = MONTH(CURDATE())')
       .andWhere('YEAR(article.viewedAt) = YEAR(CURDATE())')
       .getRawOne();
-    return result?.monthlyViews || 0;
+    return qb?.monthlyViews || 0;
   }
 
   public async getAvgPriceInRegion(regionId: ArticleID): Promise<number> {
-    const result = await this.createQueryBuilder('article')
+    const qb = await this.createQueryBuilder('article')
       .select('AVG(cost)', 'avgPriceInRegion')
       .where('article.regionId = :regionId', { regionId })
       .getRawOne();
-    return result?.avgPriceInRegion || 0;
+    return qb?.avgPriceInRegion || 0;
   }
 
   public async getAvgPriceInCountry(): Promise<number> {
-    const result = await this.createQueryBuilder('article')
+    const qb = await this.createQueryBuilder('article')
       .select('AVG(cost)', 'avgPriceInCountry')
       .getRawOne();
-    return result?.avgPriceInCountry || 0;
+    return qb?.avgPriceInCountry || 0;
   }
 }
