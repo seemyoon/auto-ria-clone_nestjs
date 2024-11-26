@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Transform, Type } from 'class-transformer';
-import { IsInt, IsString } from 'class-validator';
+import { Transform } from 'class-transformer';
+import { IsInt } from 'class-validator';
 
 import { TransformHelper } from '../../../../common/helpers/transform.helper';
 import { CarResDto } from '../../../cars/dto/res/car.res.dto';

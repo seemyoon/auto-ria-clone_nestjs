@@ -6,6 +6,7 @@ import {
 import * as bcrypt from 'bcrypt';
 
 import { RefreshTokenRepository } from '../../repository/service/refresh-token.repository';
+import { SubscribeRepository } from '../../repository/service/subscribe.repository';
 import { UserRepository } from '../../repository/service/user.repository';
 import { UserEnum } from '../../users/enum/users.enum';
 import { UserMapper } from '../../users/mapper/user.mapper';
@@ -24,6 +25,7 @@ export class AuthService {
     private readonly tokenService: TokenService,
     private readonly userRepository: UserRepository,
     private readonly refreshTokenRepository: RefreshTokenRepository,
+    private readonly subscribeRepository: SubscribeRepository,
   ) {}
 
   public async signUp(dto: SignUpReqDto): Promise<AuthResDto> {
@@ -43,6 +45,14 @@ export class AuthService {
     const user = await this.userRepository.save(
       this.userRepository.create({ ...dto, password }),
     );
+    if (dto.role === UserEnum.ADMIN) {
+      await this.subscribeRepository.save(
+        this.subscribeRepository.create({
+          user_id: user.id,
+        }),
+      );
+    }
+
     const tokens = await this.tokenService.generateAuthTokens({
       userId: user.id,
       deviceId: dto.deviceId,

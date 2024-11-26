@@ -54,7 +54,7 @@ export class BaseArticleReqDto {
     example: 'Kyiv',
     description: 'Region of the car',
   })
-  region: string;
+  place: string;
 
   @Type(() => String)
   @Transform(TransformHelper.toTrim)
