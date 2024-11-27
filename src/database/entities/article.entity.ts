@@ -63,7 +63,7 @@ export class ArticleEntity extends CreateUpdateModel {
 
   @Column()
   region_id: RegionID;
-  @ManyToOne(() => RegionEntity, (region) => region.articles)
+  @ManyToOne(() => RegionEntity, (entity) => entity.articles)
   @JoinColumn({ name: 'region_id' })
   region?: RegionEntity;
 

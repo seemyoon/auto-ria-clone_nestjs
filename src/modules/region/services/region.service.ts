@@ -73,9 +73,6 @@ export class RegionService {
 
   public async createRegion(dto: RegionReqDto): Promise<RegionEntity> {
     const regionsInDB = await this.regionRepository.find();
-    if (regionsInDB.length <= 1) {
-      throw new BadRequestException('DB did not fill');
-    }
     const existingCities = regionsInDB.map((region: RegionEntity) =>
       region.place.toLowerCase(),
     );

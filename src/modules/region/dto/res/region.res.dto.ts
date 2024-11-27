@@ -13,7 +13,7 @@ export class RegionResDto {
     example: 'Kyiv',
     description: 'Region of the car',
   })
-  region: string;
+  place: string;
 
   @ApiProperty({
     example: null,

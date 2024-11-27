@@ -5,7 +5,7 @@ import { TableNameEnum } from '../enums/table-name.enum';
 import { CreateUpdateModel } from '../models/create-update.model';
 import { ArticleEntity } from './article.entity';
 
-@Entity(TableNameEnum.CAR_REGION)
+@Entity(TableNameEnum.REGION)
 export class RegionEntity extends CreateUpdateModel {
   @PrimaryGeneratedColumn('uuid')
   id: RegionID;

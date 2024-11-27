@@ -10,7 +10,7 @@ export class RegionMapper {
   public static toResDto(data: RegionEntity): RegionResDto {
     return {
       id: data.id,
-      region: data.place,
+      place: data.place,
     };
   }
 

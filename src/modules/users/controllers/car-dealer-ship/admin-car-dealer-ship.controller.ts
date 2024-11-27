@@ -44,7 +44,7 @@ export class AdminCarDealerShipController {
     await this.adminCarDealerShipService.createAdmin(dto);
   }
 
-  @ApiBearerAuth()
+  @ApiOperation({ deprecated: true })
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(FileInterceptor('avatar'))
   @ApiFile('avatar', false, true)

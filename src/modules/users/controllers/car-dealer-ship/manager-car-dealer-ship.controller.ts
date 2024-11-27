@@ -26,7 +26,7 @@ export class ManagerCarDealerShipController {
     private readonly managerCarDealerShipController: ManagerCarDealerShipService,
   ) {}
 
-  @ApiBearerAuth()
+  @ApiOperation({ deprecated: true })
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(FileInterceptor('avatar'))
   @ApiFile('avatar', false, true)

@@ -6,7 +6,7 @@ import { TransformHelper } from '../../../../common/helpers/transform.helper';
 
 export class CarReqDto {
   @Type(() => String)
-  @Transform(TransformHelper.toTrim)
+  @Transform(TransformHelper.toLowerCase)
   @IsString()
   @ApiProperty({
     example: 'Toyota',
@@ -15,7 +15,8 @@ export class CarReqDto {
   brand: string;
 
   @Type(() => String)
-  @Transform(TransformHelper.toTrim)
+  @Transform(TransformHelper.toLowerCase)
+  @IsString()
   @ApiProperty({
     example: 'Corolla',
     description: 'Model of the car',

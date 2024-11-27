@@ -211,7 +211,7 @@ export class ArticleService {
       }
     }
 
-    if (dto.brand || dto.model) {
+    if (dto?.brand || dto?.model) {
       const car = await this.carRepository.updateCar(dto);
       if (!car) {
         throw new BadRequestException('Car not found');

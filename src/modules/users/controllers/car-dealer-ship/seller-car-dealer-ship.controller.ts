@@ -48,7 +48,7 @@ export class SellerCarDealerShipController {
     await this.sellerCarDealerShipService.editSeller(userId, dto);
   }
 
-  @ApiBearerAuth()
+  @ApiOperation({ deprecated: true })
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(FileInterceptor('avatar'))
   @ApiFile('avatar', false, true)

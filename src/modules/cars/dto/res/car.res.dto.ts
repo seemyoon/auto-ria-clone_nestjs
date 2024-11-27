@@ -1,11 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
 
+import { CarID } from '../../../../common/types/entity-ids.type';
+
 export class CarResDto {
   @ApiProperty({
     example: '6744s24-5a28-a363-a5e1-023ae2e4780f',
     description: 'Car ID',
   })
-  id: string;
+  id: CarID;
 
   @ApiProperty({
     example: 'Toyota',
@@ -17,7 +19,7 @@ export class CarResDto {
     example: 'Corolla',
     description: 'Model of the car',
   })
-  model: string;
+  model?: string;
 
   @ApiProperty({
     example: null,

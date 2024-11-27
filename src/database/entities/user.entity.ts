@@ -31,9 +31,6 @@ export class UserEntity extends CreateUpdateModel {
   @Column('text', { select: false })
   password: string;
 
-  @Column({ type: 'enum', enum: SellerEnum, nullable: true })
-  sellerType?: SellerEnum;
-
   @Column({ type: 'enum', enum: BannedEnum, default: BannedEnum.NOT_BANNED })
   isBanned: BannedEnum;
 

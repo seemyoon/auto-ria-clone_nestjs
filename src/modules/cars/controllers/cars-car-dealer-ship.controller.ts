@@ -12,7 +12,6 @@ import { SkipAuth } from '../../auth/decorators/skip-auth.decorator';
 import { ListCarsQueryDto } from '../dto/req/list-cars.query.dto';
 import { CarsOfCarDealerShipService } from '../services/cars-dealer-ship.service';
 
-@ApiBearerAuth()
 @ApiTags('CarsOfCarDealerShip (in future)')
 @Controller('cars-of-car-dealership')
 export class CarsOfCarDealerShipController {
