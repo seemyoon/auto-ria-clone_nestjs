@@ -11,3 +11,4 @@ export type ReportID = Opaque<string, 'ReportID'>;
 export type ReportCarID = Opaque<string, 'ReportCarID'>;
 export type ReportAfter3ChangesID = Opaque<string, 'ReportAfter3ChangesID'>;
 export type ReportRegionID = Opaque<string, 'ReportRegionID'>;
+export type PriceID = Opaque<string, 'PriceID'>;
