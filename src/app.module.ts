@@ -11,6 +11,7 @@ import { LoggerModule } from './modules/logger/logger.module';
 import { PostgresModule } from './modules/postgres/postgres.module';
 import { RedisModule } from './modules/redis/redis.module';
 import { RegionModule } from './modules/region/region.module';
+import { ReportsModule } from './modules/reports/reports.module';
 import { RepositoryModule } from './modules/repository/repository.module';
 import { UsersModule } from './modules/users/users.module';
 
@@ -29,6 +30,7 @@ import { UsersModule } from './modules/users/users.module';
     LoggerModule,
     CarsModule,
     RegionModule,
+    ReportsModule,
   ],
   providers: [
     {

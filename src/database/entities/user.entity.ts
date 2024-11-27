@@ -14,6 +14,7 @@ import { TableNameEnum } from '../enums/table-name.enum';
 import { CreateUpdateModel } from '../models/create-update.model';
 import { ArticleEntity } from './article.entity';
 import { RefreshTokenEntity } from './refresh-token.entity';
+import { ReportEntity } from './report.entity';
 import { SubscribeEntity } from './subscribe.entity';
 
 @Entity(TableNameEnum.USERS)
@@ -53,4 +54,7 @@ export class UserEntity extends CreateUpdateModel {
 
   @OneToMany(() => RefreshTokenEntity, (entity) => entity.user)
   refreshTokens?: RefreshTokenEntity[];
+
+  @OneToMany(() => ReportEntity, (entity) => entity.user)
+  reports?: ReportEntity[];
 }

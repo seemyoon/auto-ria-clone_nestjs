@@ -1,3 +1,5 @@
+import { ObjectCannedACL } from '@aws-sdk/client-s3';
+
 export type Config = {
   app: AppConfig;
   database: DatabaseConfig;
@@ -29,7 +31,7 @@ export type AWSConfig = {
   secretKey: string;
   region: string;
   bucket_name: string;
-  ACL: string;
+  ACL: ObjectCannedACL;
   endpoint: string;
 };
 export type SentryConfig = {

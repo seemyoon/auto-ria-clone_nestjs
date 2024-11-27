@@ -7,9 +7,20 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
+import {
+  ApiBearerAuth,
+  ApiConsumes,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 
+import { ApiFile } from '../../../../common/decorators/api-file.decorator';
+import { CurrentUser } from '../../../auth/decorators/current-user.decorator';
+import { IUserData } from '../../../auth/interfaces/user-data.interface';
 import { SellerCarDealerShipService } from '../../services/car-dealer-ship/seller-car-dealer-ship.service';
 
 @ApiBearerAuth()
@@ -35,6 +46,21 @@ export class SellerCarDealerShipController {
     @Body() dto: any,
   ): Promise<void> {
     await this.sellerCarDealerShipService.editSeller(userId, dto);
+  }
+
+  @ApiBearerAuth()
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FileInterceptor('avatar'))
+  @ApiFile('avatar', false, true)
+  @Post('me/avatar')
+  public async uploadAvatarForSeller(
+    @CurrentUser() userData: IUserData,
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<void> {
+    await this.sellerCarDealerShipService.uploadAvatarForCarDealerShipSeller(
+      userData,
+      file,
+    );
   }
 
   @ApiOperation({ deprecated: true })

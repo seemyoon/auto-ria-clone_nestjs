@@ -36,6 +36,19 @@ export class ArticleRepository extends Repository<ArticleEntity> {
     return await qb.getManyAndCount();
   }
 
+  public async updateArticleById(
+    articleId: ArticleID,
+    updateFields: Partial<ArticleEntity>,
+  ): Promise<ArticleEntity> {
+    const qb = this.createQueryBuilder('article');
+    await qb
+      .update(ArticleEntity)
+      .set(updateFields)
+      .where('id = :articleId', { articleId })
+      .execute();
+    return await qb.getOne();
+  }
+
   public async findByArticleId(articleId: ArticleID): Promise<ArticleEntity> {
     const qb = this.createQueryBuilder('article');
     qb.leftJoinAndSelect('article.user', 'user');

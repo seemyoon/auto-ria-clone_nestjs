@@ -11,7 +11,7 @@ import { TableNameEnum } from '../enums/table-name.enum';
 import { CreateUpdateModel } from '../models/create-update.model';
 import { ArticleEntity } from './article.entity';
 
-@Index(['brand', 'model', 'cost'])
+@Index(['brand', 'model'])
 @Entity(TableNameEnum.CAR)
 export class CarEntity extends CreateUpdateModel {
   @PrimaryGeneratedColumn('uuid')
@@ -22,9 +22,6 @@ export class CarEntity extends CreateUpdateModel {
 
   @Column()
   model: string;
-
-  @Column('decimal')
-  cost: number;
 
   @OneToMany(() => ArticleEntity, (entity) => entity.car)
   articles?: ArticleEntity[];

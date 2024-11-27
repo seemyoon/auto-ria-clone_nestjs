@@ -3,6 +3,7 @@ import { Transform } from 'class-transformer';
 import { IsInt } from 'class-validator';
 
 import { TransformHelper } from '../../../../common/helpers/transform.helper';
+import { isActiveArticleEnum } from '../../../../database/enums/is-active-article.enum';
 import { CarResDto } from '../../../cars/dto/res/car.res.dto';
 import { RegionResDto } from '../../../region/dto/res/region.res.dto';
 import { SellerEnum } from '../../../users/enum/seller.enum';
@@ -41,6 +42,12 @@ export class ArticleBaseResDto {
     description: 'Price of the car',
   })
   cost: number;
+
+  @ApiProperty({
+    enum: isActiveArticleEnum,
+    example: isActiveArticleEnum.ACTIVE,
+  })
+  status: isActiveArticleEnum;
 
   @ApiProperty({
     example: '2021-09-29T10:00:00.000Z',

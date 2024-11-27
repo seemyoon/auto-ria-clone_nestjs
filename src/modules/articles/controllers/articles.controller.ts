@@ -17,6 +17,8 @@ import { SkipAuth } from '../../auth/decorators/skip-auth.decorator';
 import { IUserData } from '../../auth/interfaces/user-data.interface';
 import { ListUsersQueryDto } from '../../users/models/req/list-users.query.dto';
 import { BaseArticleReqDto } from '../dto/req/article.req.dto';
+import { UpdateArticleReqDto } from '../dto/req/update-article.req.dto';
+import { ArticleApproveEditPendingResDto } from '../dto/res/article-approve.res.dto';
 import { ArticleListResDto } from '../dto/res/article-list.res.dto';
 import { ArticleSellerBaseResDto } from '../dto/res/article-seller-base-res.dto';
 import { ArticleSellerPremiumResDto } from '../dto/res/article-seller-premium.res.dto';
@@ -61,18 +63,30 @@ export class ArticlesController {
   @ApiBearerAuth()
   @Delete(':articleId')
   public async deleteArticle(
-    @Param('id', ParseUUIDPipe) userId: string,
+    @CurrentUser() userData: IUserData,
+    @Param('id', ParseUUIDPipe) articleId: ArticleID,
   ): Promise<void> {
-    await this.articleService.deleteArticle();
+    await this.articleService.deleteArticle(articleId, userData);
   }
 
   @ApiBearerAuth()
   @Patch(':articleId')
   public async editArticle(
-    @Param('id', ParseUUIDPipe) userId: string,
-  ): Promise<void> {
-    // todo ArticleSellerResDto
-    await this.articleService.editArticle();
+    @CurrentUser() userData: IUserData,
+    @Param('id', ParseUUIDPipe) articleId: ArticleID,
+    @Body() dto: UpdateArticleReqDto,
+  ): Promise<ArticleSellerBaseResDto | ArticleApproveEditPendingResDto> {
+    const result = await this.articleService.editArticle(
+      userData,
+      articleId,
+      dto,
+    );
+
+    if ('message' in result) {
+      //todo pay attention
+      return result;
+    }
+    return ArticleMapper.toBaseResDto(result);
   }
 
   @ApiBearerAuth()

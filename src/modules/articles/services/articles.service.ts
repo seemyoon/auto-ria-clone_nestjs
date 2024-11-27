@@ -6,16 +6,21 @@ import {
 
 import { ArticleID, UserID } from '../../../common/types/entity-ids.type';
 import { ArticleEntity } from '../../../database/entities/article.entity';
+import { UserEntity } from '../../../database/entities/user.entity';
+import { isActiveArticleEnum } from '../../../database/enums/is-active-article.enum';
 import { IUserData } from '../../auth/interfaces/user-data.interface';
 import { ArticleRepository } from '../../repository/service/article.repository';
 import { CarRepository } from '../../repository/service/car.repository';
 import { RegionRepository } from '../../repository/service/region.repository';
+import { ReportAfter3ChangesRepository } from '../../repository/service/report-after-3-changes.repository';
 import { SubscribeRepository } from '../../repository/service/subscribe.repository';
 import { UserRepository } from '../../repository/service/user.repository';
 import { SellerEnum } from '../../users/enum/seller.enum';
 import { UserEnum } from '../../users/enum/users.enum';
 import { ListUsersQueryDto } from '../../users/models/req/list-users.query.dto';
 import { BaseArticleReqDto } from '../dto/req/article.req.dto';
+import { UpdateArticleReqDto } from '../dto/req/update-article.req.dto';
+import { ArticleApproveEditPendingResDto } from '../dto/res/article-approve.res.dto';
 import { ArticleSellerPremiumResDto } from '../dto/res/article-seller-premium.res.dto';
 import { ArticleMapper } from '../mapper/article.mapper';
 
@@ -27,6 +32,7 @@ export class ArticleService {
     private readonly carRepository: CarRepository,
     private readonly userRepository: UserRepository,
     private readonly subscribeRepository: SubscribeRepository,
+    private readonly reportAfter3ChangesRepository: ReportAfter3ChangesRepository,
   ) {}
 
   public async getArticles(
@@ -78,15 +84,15 @@ export class ArticleService {
       throw new BadRequestException('Region not found');
     }
 
-    // const car = await this.carRepository.findOneBy({
-    //   brand: dto.brand,
-    //   model: dto.model,
-    // });
-    // if (!car) {
-    //   throw new BadRequestException(
-    //     'Your car is not on the list? Please send your request to the manager for approval',
-    //   ); //todo say to another endpoint
-    // }
+    const car = await this.carRepository.findOneBy({
+      brand: dto.brand,
+      model: dto.model,
+    });
+    if (!car) {
+      throw new BadRequestException(
+        'Your car is not on the list? Please send your request to the manager for approval (refer to another endpoint)',
+      );
+    }
 
     return await this.articleRepository.save(
       this.articleRepository.create({
@@ -101,9 +107,7 @@ export class ArticleService {
     userData: IUserData,
     articleId: ArticleID,
   ): Promise<ArticleSellerPremiumResDto> {
-    const article = await this.articleRepository.findOne({
-      where: { id: articleId },
-    });
+    const article = await this.articleRepository.findByArticleId(articleId);
     if (!article) {
       throw new Error('Article not found');
     }
@@ -131,13 +135,129 @@ export class ArticleService {
     );
   }
 
-  public async deleteArticle(): Promise<void> {}
+  public async deleteArticle(
+    articleId: ArticleID,
+    userData: IUserData,
+  ): Promise<void> {
+    const articleToDelete = await this.returnArticleOrThrow(articleId);
 
-  public async editArticle(): Promise<ArticleEntity> {
-    return {} as ArticleEntity;
+    const user = await this.returnUserOrThrow(userData.userId);
+
+    const allowedRoles = [
+      UserEnum.ADMIN,
+      UserEnum.MANAGER,
+      UserEnum.DEALERSHIP_ADMIN,
+      UserEnum.DEALERSHIP_MANAGER,
+    ];
+
+    if (
+      articleToDelete.user_id !== userData.userId &&
+      !allowedRoles.includes(user.role)
+    ) {
+      throw new ConflictException(
+        'You do not have permission to edit this article.',
+      );
+    }
+    await this.articleRepository.remove(articleToDelete);
   }
 
-  private async verifyArticle(): Promise<void> {}
+  public async editArticle(
+    userData: IUserData,
+    articleId: ArticleID,
+    dto: UpdateArticleReqDto,
+  ): Promise<ArticleEntity | ArticleApproveEditPendingResDto> {
+    const article = await this.returnArticleOrThrow(articleId);
+
+    const user = await this.returnUserOrThrow(userData.userId);
+
+    const allowedRoles = [
+      UserEnum.ADMIN,
+      UserEnum.MANAGER,
+      UserEnum.DEALERSHIP_ADMIN,
+      UserEnum.DEALERSHIP_MANAGER,
+    ];
+
+    if (
+      article.user_id !== userData.userId &&
+      !allowedRoles.includes(user.role)
+    ) {
+      throw new ConflictException(
+        'You do not have permission to edit this article.',
+      );
+    }
+
+    if (article.changesCount >= 3 && !allowedRoles.includes(user.role)) {
+      throw new ConflictException(
+        'This article requires manager or admin approval for further changes.',
+      );
+    }
+
+    const updateFields: Partial<ArticleEntity> = {};
+
+    if (dto.title) updateFields.title = dto.title;
+    if (dto.description) updateFields.description = dto.description;
+    if (dto.body) updateFields.body = dto.body;
+    if (dto.cost) updateFields.cost = dto.cost;
+
+    if (dto?.place) {
+      const region = await this.regionRepository.findOneBy({
+        place: dto.place,
+      });
+
+      if (region) {
+        updateFields['region_id'] = region.id;
+      } else {
+        throw new BadRequestException('Region not found');
+      }
+    }
+
+    if (dto.brand || dto.model) {
+      const car = await this.carRepository.updateCar(dto);
+      if (!car) {
+        throw new BadRequestException('Car not found');
+      }
+
+      updateFields['car_id'] = car.id;
+    }
+    article.changesCount += 1;
+
+    await this.articleRepository.save({ ...article, ...updateFields });
+
+    if (article.changesCount >= 3) {
+      await this.reportAfter3ChangesRepository.save(
+        this.reportAfter3ChangesRepository.create({ article_id: articleId }),
+      );
+      article.status = isActiveArticleEnum.INACTIVE;
+      await this.articleRepository.save(article);
+
+      return {
+        message:
+          'This article requires manager or admin approval for further changes.',
+      };
+    }
+
+    return await this.articleRepository.findOneBy({ id: articleId });
+  }
+
+  private async verifyArticle(): Promise<void> {} //todo for create and edit article
+
+  private async returnUserOrThrow(userId: UserID): Promise<UserEntity> {
+    const user = await this.userRepository.findOneBy({ id: userId });
+    if (!user) {
+      throw new ConflictException('User not found');
+    }
+    return user;
+  }
+
+  private async returnArticleOrThrow(
+    articleId: ArticleID,
+  ): Promise<ArticleEntity> {
+    const article = await this.articleRepository.findByArticleId(articleId);
+    if (!article) {
+      throw new ConflictException('Article not found');
+    }
+    return article;
+  }
 
   private async isSubscribed(userId: UserID): Promise<void> {
     await this.subscribeRepository.findOneBy({
@@ -146,33 +266,3 @@ export class ArticleService {
     throw new ConflictException('Subscription not found');
   }
 }
-
-// export class Approve3TimesOfCarResDto {
-//   @ApiProperty({
-//     example:
-//       'You have edited the ad 3 times. It is now being reviewed. Please wait for confirmation.',
-//     description: 'Message indicating attempts',
-//   })
-//   message: string;
-// }
-//
-// export class ApproveBrandOfCarResDto {
-//   @ApiProperty({
-//     example:
-//       'Sorry, but no car was found for your request. The request has been sent to the manager, please wait' +
-//       ' until he approves it.',
-//     description: 'Message indicating the status of the request',
-//   })
-//   message: string;
-// }
-//
-// export class ApproveRegionOfCarResDto {
-//   @ApiProperty({
-//     example:
-//       'Sorry, no car was found in the specified region. The request has been sent to the manager for approval.' +
-//       ' Please  wait for confirmation.',
-//     description:
-//       'Message indicating the status of the request related to car region approval',
-//   })
-//   message: string;
-// }

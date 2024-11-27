@@ -17,6 +17,7 @@ export class ArticleMapper {
       title: data.title,
       description: data.description,
       body: data.body,
+      status: data.status,
       created: data.created,
       updated: data.updated,
       sellerType: data.sellerType,

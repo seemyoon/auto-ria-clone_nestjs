@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { AuthModule } from '../auth/auth.module';
+import { FileStorageModule } from '../file-storage/file-storage.module';
 import { AdminCarDealerShipController } from './controllers/car-dealer-ship/admin-car-dealer-ship.controller';
 import { ManagerCarDealerShipController } from './controllers/car-dealer-ship/manager-car-dealer-ship.controller';
 import { SellerCarDealerShipController } from './controllers/car-dealer-ship/seller-car-dealer-ship.controller';
@@ -32,7 +33,7 @@ const usersCarDealerShipServices = [
 ];
 
 @Module({
-  imports: [AuthModule],
+  imports: [AuthModule, FileStorageModule],
   controllers: [...usersControllers, ...usersCarDealerShipControllers],
   providers: [...usersServices, ...usersCarDealerShipServices],
 })

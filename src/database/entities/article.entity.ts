@@ -3,6 +3,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -13,10 +14,12 @@ import {
   UserID,
 } from '../../common/types/entity-ids.type';
 import { SellerEnum } from '../../modules/users/enum/seller.enum';
+import { isActiveArticleEnum } from '../enums/is-active-article.enum';
 import { TableNameEnum } from '../enums/table-name.enum';
 import { CreateUpdateModel } from '../models/create-update.model';
 import { CarEntity } from './car.entity';
 import { RegionEntity } from './region.entity';
+import { ReportAfter3ChangesEntity } from './report-after-3-changes.entity';
 import { UserEntity } from './user.entity';
 
 @Entity(TableNameEnum.ARTICLES)
@@ -39,6 +42,13 @@ export class ArticleEntity extends CreateUpdateModel {
   @Column('decimal', { precision: 10 })
   cost: number;
 
+  @Column({
+    type: 'enum',
+    enum: isActiveArticleEnum,
+    default: isActiveArticleEnum.ACTIVE,
+  })
+  status: isActiveArticleEnum;
+
   @Column()
   user_id: UserID;
   @ManyToOne(() => UserEntity, (entity) => entity.articles)
@@ -56,4 +66,10 @@ export class ArticleEntity extends CreateUpdateModel {
   @ManyToOne(() => RegionEntity, (region) => region.articles)
   @JoinColumn({ name: 'region_id' })
   region?: RegionEntity;
+
+  @OneToOne(() => ReportAfter3ChangesEntity, (entity) => entity.article)
+  report_after_3_changes?: ArticleEntity;
+
+  @Column({ default: 0 })
+  changesCount: number;
 }

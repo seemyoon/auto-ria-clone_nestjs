@@ -2,6 +2,8 @@ import { ConflictException, Injectable } from '@nestjs/common';
 
 import { UserEntity } from '../../../../database/entities/user.entity';
 import { IUserData } from '../../../auth/interfaces/user-data.interface';
+import { FileTypeEnum } from '../../../file-storage/enum/file-type.enum';
+import { FileStorageService } from '../../../file-storage/services/file-storage.service';
 import { RefreshTokenRepository } from '../../../repository/service/refresh-token.repository';
 import { SubscribeRepository } from '../../../repository/service/subscribe.repository';
 import { UserRepository } from '../../../repository/service/user.repository';
@@ -12,6 +14,7 @@ import { UpdateReqUserDto } from '../../models/req/update-req-user.dto';
 @Injectable()
 export class SellerService {
   constructor(
+    private readonly fileStorageService: FileStorageService,
     private readonly userRepository: UserRepository,
     private readonly refreshTokenRepository: RefreshTokenRepository,
     private readonly subscribeRepository: SubscribeRepository,
@@ -28,6 +31,22 @@ export class SellerService {
     query: ListUsersQueryDto,
   ): Promise<[UserEntity[], number]> {
     return await this.userRepository.findAll(query);
+  }
+
+  public async uploadAvatarForSeller(
+    userData: IUserData,
+    file: Express.Multer.File,
+  ): Promise<void> {
+    const seller = await this.userRepository.findOneBy({ id: userData.userId });
+    const filePath = await this.fileStorageService.uploadFile(
+      file,
+      FileTypeEnum.IMAGE,
+      userData.userId,
+    );
+    if (seller.image) {
+      await this.fileStorageService.deleteFile(seller.image);
+    }
+    await this.userRepository.save({ ...seller, image: filePath });
   }
 
   public async editSeller(

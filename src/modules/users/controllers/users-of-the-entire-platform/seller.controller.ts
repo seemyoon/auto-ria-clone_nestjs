@@ -8,9 +8,13 @@ import {
   Patch,
   Post,
   Query,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
 
+import { ApiFile } from '../../../../common/decorators/api-file.decorator';
 import { UserID } from '../../../../common/types/entity-ids.type';
 import { CurrentUser } from '../../../auth/decorators/current-user.decorator';
 import { SkipAuth } from '../../../auth/decorators/skip-auth.decorator';
@@ -32,6 +36,18 @@ export class SellerController {
   @Get('getMe')
   public async getMe(@CurrentUser() userData: IUserData): Promise<UserResDto> {
     return UserMapper.toResDto(await this.sellerService.getMe(userData));
+  }
+
+  @ApiBearerAuth()
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FileInterceptor('avatar'))
+  @ApiFile('avatar', false, true)
+  @Post('me/avatar')
+  public async uploadAvatarForSeller(
+    @CurrentUser() userData: IUserData,
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<void> {
+    await this.sellerService.uploadAvatarForSeller(userData, file);
   }
 
   @ApiBearerAuth()

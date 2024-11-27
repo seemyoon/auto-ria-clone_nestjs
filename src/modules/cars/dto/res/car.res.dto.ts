@@ -1,8 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-import { ArticleSellerBaseResDto } from '../../../articles/dto/res/article-seller-base-res.dto';
-import { RegionResDto } from '../../../region/dto/res/region.res.dto';
-
 export class CarResDto {
   @ApiProperty({
     example: '6744s24-5a28-a363-a5e1-023ae2e4780f',
@@ -23,12 +20,6 @@ export class CarResDto {
   model: string;
 
   @ApiProperty({
-    example: 200000,
-    description: 'Cost of the car',
-  })
-  cost: number;
-
-  @ApiProperty({
     example: null,
     description: 'Deleted timestamp of the car, if deleted',
   })
@@ -45,8 +36,4 @@ export class CarResDto {
     description: 'Updated field',
   })
   updated: Date;
-
-  region?: RegionResDto[];
-
-  articles?: ArticleSellerBaseResDto[];
 }
