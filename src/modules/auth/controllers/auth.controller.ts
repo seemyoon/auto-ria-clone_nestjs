@@ -65,6 +65,7 @@ export class AuthController {
     await this.authService.changePassword(userData, dto);
   }
 
+  @SkipAuth()
   @Post('changeTemporaryPassword')
   public async changeTemporaryPassword(
     @Body() dto: ChangeTemporaryPasswordReqDto,

@@ -4,7 +4,6 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import * as bcrypt from 'bcrypt';
 
 import { UserID } from '../../../common/types/entity-ids.type';
 import { UserEntity } from '../../../database/entities/user.entity';
@@ -95,9 +94,12 @@ export class AuthService {
         'Password is temporary, you must change it',
       );
 
-    const isPasswordValid = await bcrypt.compare(dto.password, user.password);
+    const isPasswordValid = await this.passwordService.comparePassword(
+      dto.password,
+      user.password,
+    );
     if (!isPasswordValid) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('Password is incorrect');
     }
 
     const tokens = await this.tokenService.generateAuthTokens({
@@ -179,6 +181,8 @@ export class AuthService {
     }
     //todo arr of old passwords to store all previous user passwords,
 
+    await this.checkOldPassword(dto.oldPassword, user.password);
+
     const isPrevious = await this.passwordService.comparePassword(
       dto.password,
       user.password,
@@ -215,19 +219,23 @@ export class AuthService {
   public async changeTemporaryPassword(
     dto: ChangeTemporaryPasswordReqDto,
   ): Promise<void> {
-    await this.isEmailNotExistOrThrow(dto.email);
-
     const user = await this.userRepository.findOne({
       where: { email: dto.email },
       select: ['id', 'password', 'isTemporaryPassword'],
     });
+
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+
+    await this.checkOldPassword(dto.oldPassword, user.password);
 
     const isPrevious = await this.passwordService.comparePassword(
       dto.password,
       user.password,
     );
 
-    if (isPrevious) throw new UnauthorizedException('Password already used');
+    if (isPrevious) throw new ConflictException('Password already used');
 
     const password = await this.passwordService.hashPassword(dto.password, 10);
 
@@ -252,6 +260,19 @@ export class AuthService {
 
     await this.userRepository.save(user);
     return user;
+  }
+
+  private async checkOldPassword(
+    oldPasswordDto: string,
+    passwordDB: string,
+  ): Promise<void> {
+    const isPasswordValid = await this.passwordService.comparePassword(
+      oldPasswordDto,
+      passwordDB,
+    );
+    if (!isPasswordValid) {
+      throw new ConflictException('Password is incorrect');
+    }
   }
 
   private async isEmailNotExistOrThrow(email: string): Promise<void> {
