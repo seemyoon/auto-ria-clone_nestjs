@@ -3,6 +3,7 @@ import {
   ConflictException,
   Injectable,
 } from '@nestjs/common';
+import { IsNull, Not } from 'typeorm';
 
 import { UserID } from '../../../common/types/entity-ids.type';
 import { SubscribeEntity } from '../../../database/entities/subscribe.entity';
@@ -32,19 +33,31 @@ export class UserService {
   ) {}
 
   public async getMe(userData: IUserData): Promise<UserEntity> {
-    return await this.userRepository.findOneBy({ id: userData.userId });
-  } //
+    await this.isBanned(userData.userId);
+    await this.isDeleted(userData.userId);
+    return await this.userRepository.findUser(userData.userId);
+  }
+
+  public async getUsers(
+    userData: IUserData,
+    query: ListUsersQueryDto,
+  ): Promise<[UserEntity[], number]> {
+    await this.isAdminOrManager(userData.userId);
+    return await this.userRepository.findAll(query);
+  }
 
   public async getSellers(
     query: ListUsersQueryDto,
   ): Promise<[UserEntity[], number]> {
-    return await this.userRepository.findAll(query);
-  } //
+    return await this.userRepository.findAllSellers(query);
+  }
 
   public async uploadAvatar(
     userData: IUserData,
     file: Express.Multer.File,
   ): Promise<void> {
+    await this.isBanned(userData.userId);
+    await this.isDeleted(userData.userId);
     const seller = await this.userRepository.findOneBy({ id: userData.userId });
     const filePath = await this.fileStorageService.uploadFile(
       file,
@@ -55,46 +68,42 @@ export class UserService {
       await this.fileStorageService.deleteFile(seller.image);
     }
     await this.userRepository.save({ ...seller, image: filePath });
-  } //
+  }
 
   public async deleteAvatar(userData: IUserData): Promise<void> {
+    await this.isBanned(userData.userId);
+    await this.isDeleted(userData.userId);
     const user = await this.userRepository.findOneBy({ id: userData.userId });
     if (user.image) {
       await this.fileStorageService.deleteFile(user.image);
       await this.userRepository.save({ ...user, image: null });
     }
-  } //
-
-  public async editSeller(
-    userData: IUserData,
-    userId: string,
-    dto: UpdateReqUserDto,
-  ): Promise<UserEntity> {
-    await this.isAdminOrManager(userData.userId);
-    await this.userRepository.update(userId, dto);
-    return await this.userRepository.findOneBy({} as UserEntity);
-  } //
+  }
 
   public async editMe(
     userData: IUserData,
     dto: UpdateReqUserDto,
   ): Promise<UserEntity> {
+    await this.isBanned(userData.userId);
+    await this.isDeleted(userData.userId);
     return await this.returnedUpdatedUserOrThrow(userData.userId, dto);
-  } //
+  }
 
   public async deleteMe(userData: IUserData): Promise<void> {
+    await this.isBanned(userData.userId);
+    await this.isDeleted(userData.userId);
     await this.userRepository.update(
       { id: userData.userId },
       { deleted: new Date() },
     );
     await this.refreshTokenRepository.delete({ user_id: userData.userId });
-  } //
+  }
 
   public async getSeller(userId: UserID): Promise<UserEntity> {
     return await this.returnedUserOrThrow(userId);
-  } //
+  }
 
-  async banOrUnbanUser(
+  public async banOrUnbanUser(
     userId: UserID,
     isBanned: BannedEnum,
     userData: IUserData,
@@ -102,11 +111,17 @@ export class UserService {
     await this.isAdminOrManager(userData.userId);
     const user = await this.returnedUserOrThrow(userId);
 
+    if (![UserEnum.ADMIN, UserEnum.MANAGER].includes(user.role)) {
+      throw new ConflictException('You can not ban admin or manager');
+    }
+
     user.isBanned = isBanned;
     await this.userRepository.save(user);
-  } //
+  }
 
   public async subscribe(userData: IUserData): Promise<void> {
+    await this.isBanned(userData.userId);
+    await this.isDeleted(userData.userId);
     const subscribe = await this.subscribeRepository.findOneBy({
       user_id: userData.userId,
     });
@@ -118,9 +133,11 @@ export class UserService {
         user_id: userData.userId,
       }),
     );
-  } //
+  }
 
   public async unsubscribe(userData: IUserData): Promise<void> {
+    await this.isBanned(userData.userId);
+    await this.isDeleted(userData.userId);
     const subscribe = await this.subscribeRepository.findOneBy({
       user_id: userData.userId,
     });
@@ -128,7 +145,7 @@ export class UserService {
       throw new ConflictException('You have not subscribe yet');
     }
     await this.subscribeRepository.remove(subscribe);
-  } //
+  }
 
   public async createUser(
     userData: IUserData,
@@ -154,6 +171,19 @@ export class UserService {
       select: ['id', 'password', 'isTemporaryPassword'],
     });
 
+    if (
+      dto.role === UserEnum.MANAGER ||
+      dto.role === UserEnum.ADMIN ||
+      dto.role === UserEnum.DEALERSHIP_MANAGER ||
+      dto.role === UserEnum.DEALERSHIP_ADMIN
+    ) {
+      await this.subscribeRepository.save(
+        this.subscribeRepository.create({
+          user_id: user.id,
+        }),
+      );
+    }
+
     user.isTemporaryPassword = true;
 
     await this.userRepository.save(user);
@@ -166,29 +196,54 @@ export class UserService {
   ): Promise<[SubscribeEntity[], number]> {
     await this.isAdminOrManager(userData.userId);
     return await this.subscribeRepository.findAll(query);
-  } //
+  }
+
+  private async isBanned(userId: UserID): Promise<void> {
+    const ban = await this.userRepository.findOneBy({
+      id: userId,
+      isBanned: BannedEnum.BANNED,
+    });
+    if (ban) {
+      throw new ConflictException(
+        'You are limited in your options because you are banned',
+      );
+    }
+  }
+
+  private async isDeleted(userId: UserID): Promise<void> {
+    const isDeleted = await this.userRepository.findOneBy({
+      id: userId,
+      deleted: Not(IsNull()),
+    });
+    if (isDeleted) {
+      throw new ConflictException(
+        'You are limited in your options because you are deleted',
+      );
+    }
+  }
 
   private async returnedUserOrThrow(userId: UserID): Promise<UserEntity> {
-    const user = await this.userRepository.findOneBy({ id: userId });
+    const user = await this.userRepository.findUser(userId);
+
     if (!user) {
       throw new ConflictException('User not found');
     }
     return user;
-  } //
+  }
 
   private async isAdminOrManager(userId: UserID): Promise<void> {
     const user = await this.userRepository.findOneBy({ id: userId });
     if (![UserEnum.ADMIN, UserEnum.MANAGER].includes(user.role)) {
       throw new BadRequestException('you do not have access rights');
     }
-  } //
+  }
 
   private async isAdmin(userId: UserID): Promise<void> {
     const user = await this.userRepository.findOneBy({ id: userId });
     if (![UserEnum.ADMIN].includes(user.role)) {
       throw new BadRequestException('You are not an admin');
     }
-  } //
+  }
 
   private async returnedUpdatedUserOrThrow(
     userId: UserID,
@@ -204,5 +259,5 @@ export class UserService {
 
     await this.userRepository.save(user);
     return user;
-  } //
+  }
 }

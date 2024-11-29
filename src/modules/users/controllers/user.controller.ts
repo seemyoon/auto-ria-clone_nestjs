@@ -39,7 +39,7 @@ export class UserController {
   @Get('getMe')
   public async getMe(@CurrentUser() userData: IUserData): Promise<UserResDto> {
     return UserMapper.toResDto(await this.userService.getMe(userData));
-  } //
+  }
 
   @ApiBearerAuth()
   @ApiConsumes('multipart/form-data')
@@ -51,13 +51,13 @@ export class UserController {
     @UploadedFile() file: Express.Multer.File,
   ): Promise<void> {
     await this.userService.uploadAvatar(userData, file);
-  } //
+  }
 
   @ApiBearerAuth()
   @Delete('me/avatar')
   public async deleteAvatar(@CurrentUser() userData: IUserData): Promise<void> {
     await this.userService.deleteAvatar(userData);
-  } //
+  }
 
   @ApiBearerAuth()
   @Patch('editMe')
@@ -66,13 +66,23 @@ export class UserController {
     @Body() dto: UpdateReqUserDto,
   ): Promise<UserResDto> {
     return UserMapper.toResDto(await this.userService.editMe(userData, dto));
-  } //
+  }
 
   @ApiBearerAuth()
-  @Get('deleteMe')
+  @Delete('deleteMe')
   public async deleteMe(@CurrentUser() userData: IUserData): Promise<void> {
     await this.userService.deleteMe(userData);
-  } //
+  }
+
+  @ApiBearerAuth()
+  @Get('getUsers')
+  public async getUsers(
+    @CurrentUser() userData: IUserData,
+    @Query() query: ListUsersQueryDto,
+  ): Promise<UsersListResDto> {
+    const [entities, total] = await this.userService.getUsers(userData, query);
+    return UserMapper.toResDtoList(entities, total, query);
+  }
 
   @SkipAuth()
   @Get('getSellers')
@@ -81,31 +91,31 @@ export class UserController {
   ): Promise<UsersListResDto> {
     const [entities, total] = await this.userService.getSellers(query);
     return UserMapper.toResDtoList(entities, total, query);
-  } //
+  }
 
   @ApiBearerAuth()
   @Post('subscribe')
   public async subscribe(@CurrentUser() userData: IUserData): Promise<void> {
     await this.userService.subscribe(userData);
-  } //
+  }
 
   @ApiBearerAuth()
   @Delete('subscribe')
   public async unsubscribe(@CurrentUser() userData: IUserData): Promise<void> {
     await this.userService.unsubscribe(userData);
-  } //
+  }
 
-  @ApiBearerAuth()
-  @Patch('editSeller')
-  public async editSeller(
-    @CurrentUser() userData: IUserData,
-    @Param('articleId', ParseUUIDPipe) userId: UserID,
-    @Body() dto: UpdateReqUserDto,
-  ): Promise<UserResDto> {
-    return UserMapper.toResDto(
-      await this.userService.editSeller(userData, userId, dto),
-    );
-  } //
+  //@ApiBearerAuth()
+  // @Patch('editSeller')
+  // public async editSeller(
+  //   @CurrentUser() userData: IUserData,
+  //   @Param('articleId', ParseUUIDPipe) userId: UserID,
+  //   @Body() dto: UpdateReqUserDto,
+  // ): Promise<UserResDto> {
+  //   return UserMapper.toResDto(
+  //     await this.userService.editSeller(userData, userId, dto),
+  //   );
+  // } //
 
   @ApiBearerAuth()
   @Post('createUser')
@@ -129,23 +139,23 @@ export class UserController {
       userData,
     );
     return UserMapper.toSubscriptionResDtoList(entities, total, query);
-  } //
+  }
 
   @ApiBearerAuth()
-  @Patch(':sellerId/banned')
+  @Patch(':userId/banned')
   public async banOrUnbanUser(
     @CurrentUser() userData: IUserData,
-    @Param('id', ParseUUIDPipe) userId: UserID,
+    @Param('userId', ParseUUIDPipe) userId: UserID,
     @Body() dto: BannedReqUserDto,
   ): Promise<void> {
     await this.userService.banOrUnbanUser(userId, dto.isBanned, userData);
-  } //
+  }
 
   @SkipAuth()
-  @Get(':sellerId')
+  @Get(':userId')
   public async getSeller(
     @Param('userId', ParseUUIDPipe) userId: UserID,
   ): Promise<UserResDto> {
     return UserMapper.toResDto(await this.userService.getSeller(userId));
-  } //
+  }
 }

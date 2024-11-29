@@ -12,8 +12,8 @@ export class CarMapper {
       id: data?.id,
       brand: data?.brand,
       model: data?.model,
-      created: data.created,
-      updated: data.updated,
+      created: data.createdAt,
+      updated: data.updatedAt,
     };
   }
 

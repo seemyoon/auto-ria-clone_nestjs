@@ -22,8 +22,7 @@ export class BaseArticleReqDto {
   description: string;
 
   @ApiProperty({
-    example:
-      'This section contains an in-depth look at some of my favorite dishes. ',
+    example: 'This section contains info about car. ',
   })
   @IsString()
   @Length(0, 200)
@@ -33,6 +32,7 @@ export class BaseArticleReqDto {
 
   @Type(() => String)
   @Transform(TransformHelper.toTrim)
+  @Transform(TransformHelper.toLowerCase)
   @IsString()
   @ApiProperty({
     example: 'Toyota',
@@ -40,7 +40,6 @@ export class BaseArticleReqDto {
   })
   brand: string;
 
-  @Transform(TransformHelper.toTrim)
   @IsInt()
   @ApiProperty({
     example: 200000,
@@ -58,6 +57,8 @@ export class BaseArticleReqDto {
 
   @Type(() => String)
   @Transform(TransformHelper.toTrim)
+  @Transform(TransformHelper.toLowerCase)
+  @IsString()
   @ApiProperty({
     example: 'Corolla',
     description: 'Model of the car',

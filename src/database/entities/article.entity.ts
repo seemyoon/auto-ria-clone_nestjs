@@ -27,7 +27,7 @@ export class ArticleEntity extends CreateUpdateModel {
   @PrimaryGeneratedColumn('uuid')
   id: ArticleID;
 
-  @Column('text')
+  @Column('text', { nullable: true })
   title: string;
 
   @Column('text', { nullable: true })
@@ -39,8 +39,11 @@ export class ArticleEntity extends CreateUpdateModel {
   @Column({ type: 'enum', enum: SellerEnum, default: SellerEnum.SELLER })
   sellerType?: SellerEnum;
 
-  @Column('decimal', { precision: 10 })
+  @Column({ type: 'int', default: 0 })
   cost: number;
+
+  @Column({ type: 'int', default: 0 })
+  views: number;
 
   @Column({
     type: 'enum',

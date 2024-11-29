@@ -71,7 +71,7 @@ export class ArticleRepository extends Repository<ArticleEntity> {
     const qb = await this.createQueryBuilder('article')
       .select('SUM(views)', 'dailyViews')
       .where('article.id = :articleId', { articleId })
-      .andWhere('DATE(article.viewedAt) = CURDATE()')
+      .andWhere('DATE(article.createdAt) = CURRENT_DATE')
       .getRawOne();
     return qb?.dailyViews || 0;
   }
@@ -80,7 +80,12 @@ export class ArticleRepository extends Repository<ArticleEntity> {
     const qb = await this.createQueryBuilder('article')
       .select('SUM(views)', 'weeklyViews')
       .where('article.id = :articleId', { articleId })
-      .andWhere('YEARWEEK(article.viewedAt, 1) = YEARWEEK(CURDATE(), 1)')
+      .andWhere(
+        'EXTRACT(week FROM article.createdAt) = EXTRACT(week FROM CURRENT_DATE)',
+      )
+      .andWhere(
+        'EXTRACT(year FROM article.createdAt) = EXTRACT(year FROM CURRENT_DATE)',
+      )
       .getRawOne();
     return qb?.weeklyViews || 0;
   }
@@ -89,23 +94,27 @@ export class ArticleRepository extends Repository<ArticleEntity> {
     const qb = await this.createQueryBuilder('article')
       .select('SUM(views)', 'monthlyViews')
       .where('article.id = :articleId', { articleId })
-      .andWhere('MONTH(article.viewedAt) = MONTH(CURDATE())')
-      .andWhere('YEAR(article.viewedAt) = YEAR(CURDATE())')
+      .andWhere(
+        'EXTRACT(MONTH FROM article.createdAt) = EXTRACT(MONTH FROM CURRENT_DATE)',
+      )
+      .andWhere(
+        'EXTRACT(YEAR FROM article.createdAt) = EXTRACT(YEAR FROM CURRENT_DATE)',
+      )
       .getRawOne();
     return qb?.monthlyViews || 0;
   }
 
   public async getAvgPriceInRegion(regionId: ArticleID): Promise<number> {
-    const qb = await this.createQueryBuilder('article')
-      .select('AVG(cost)', 'avgPriceInRegion')
-      .where('article.regionId = :regionId', { regionId })
+    const qb = await this.createQueryBuilder('articles')
+      .select('ROUND(AVG(cost), 2)', 'avgPriceInRegion')
+      .andWhere('articles.region_id = :regionId', { regionId }) //todo getAvgPriceInRegion, decide with avg
       .getRawOne();
     return qb?.avgPriceInRegion || 0;
   }
 
   public async getAvgPriceInCountry(): Promise<number> {
     const qb = await this.createQueryBuilder('article')
-      .select('AVG(cost)', 'avgPriceInCountry')
+      .select('ROUND(AVG(cost), 2)', 'avgPriceInCountry')
       .getRawOne();
     return qb?.avgPriceInCountry || 0;
   }

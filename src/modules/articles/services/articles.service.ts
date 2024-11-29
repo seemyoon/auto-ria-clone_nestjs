@@ -42,6 +42,14 @@ export class ArticleService {
   }
 
   public async getArticle(articleId: ArticleID): Promise<ArticleEntity> {
+    const article = await this.articleRepository.findByArticleId(articleId);
+    if (!article) {
+      throw new ConflictException('Article not found');
+    }
+
+    article.views += 1;
+    await this.articleRepository.save(article);
+
     return await this.articleRepository.findByArticleId(articleId);
   }
 
@@ -49,14 +57,14 @@ export class ArticleService {
     userData: IUserData,
     dto: BaseArticleReqDto,
   ): Promise<ArticleEntity> {
-    const user = await this.userRepository.findOneBy({ id: userData.userId });
+    const user = await this.userRepository.findById(userData.userId);
     const subscribe = await this.subscribeRepository.findOneBy({
       user_id: userData.userId,
     });
 
     if (!subscribe) {
-      if (user.articles.length >= 1) {
-        throw new BadRequestException(
+      if (user.articles && user.articles.length >= 1) {
+        throw new ConflictException(
           "You have a basic subscription, so you can't create more than 1 article,",
         );
       }
@@ -74,6 +82,7 @@ export class ArticleService {
       case UserEnum.DEALERSHIP_MANAGER:
       case UserEnum.ADMIN:
       case UserEnum.DEALERSHIP_ADMIN:
+        sellerType = null;
         break;
       default:
         throw new BadRequestException('Invalid user role');
@@ -93,14 +102,20 @@ export class ArticleService {
         'Your car is not on the list? Please send your request to the manager for approval (refer to another endpoint)',
       );
     }
+    const result = this.articleRepository.create({
+      title: dto.title,
+      description: dto.description,
+      body: dto.body,
+      cost: dto.cost,
+      sellerType: sellerType,
+      user_id: userData.userId,
+      car_id: car.id,
+      region_id: region.id,
+    });
 
-    return await this.articleRepository.save(
-      this.articleRepository.create({
-        ...dto,
-        user_id: userData.userId,
-        sellerType,
-      }),
-    );
+    const savedArticle = await this.articleRepository.save(result);
+
+    return await this.articleRepository.findByArticleId(savedArticle.id);
   }
 
   public async getPremiumInfoArticle(
@@ -109,7 +124,7 @@ export class ArticleService {
   ): Promise<ArticleSellerPremiumResDto> {
     const article = await this.articleRepository.findByArticleId(articleId);
     if (!article) {
-      throw new Error('Article not found');
+      throw new ConflictException('Article not found');
     }
     await this.isSubscribed(userData.userId);
 
@@ -260,9 +275,12 @@ export class ArticleService {
   }
 
   private async isSubscribed(userId: UserID): Promise<void> {
-    await this.subscribeRepository.findOneBy({
-      user_id: userId,
-    });
-    throw new ConflictException('Subscription not found');
+    try {
+      await this.subscribeRepository.findOneBy({
+        user_id: userId,
+      });
+    } catch (error) {
+      throw new ConflictException('Subscription not found');
+    }
   }
 }
