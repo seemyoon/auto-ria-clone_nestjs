@@ -18,7 +18,9 @@ export class ReportRegionEntity {
   @Column()
   region: string;
 
-  @ManyToOne(() => ReportEntity, (report) => report.regionReports)
+  @ManyToOne(() => ReportEntity, (report) => report.regionReports, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'report_id' })
   report: ReportEntity;
 }

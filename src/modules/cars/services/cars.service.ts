@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+} from '@nestjs/common';
 
 import { CarID, UserID } from '../../../common/types/entity-ids.type';
 import { CarEntity } from '../../../database/entities/car.entity';
@@ -31,10 +35,8 @@ export class CarsService {
     carId: CarID,
   ): Promise<CarEntity> {
     await this.isUserOrManager(userData.userId);
-    const car = await this.carRepository.findByCarId(carId);
-    if (!car) {
-      throw new BadRequestException('Region not found');
-    }
+
+    const car = await this.returnedCarOrThrow(carId);
 
     if (dto.brand) {
       car.brand = dto.brand;
@@ -66,6 +68,14 @@ export class CarsService {
         model: dto.model,
       }),
     );
+  }
+
+  private async returnedCarOrThrow(carId: CarID): Promise<CarEntity> {
+    const car = await this.carRepository.findOneBy({ id: carId });
+    if (!car) {
+      throw new ConflictException('Car not found');
+    }
+    return car;
   }
 
   private async isUserOrManager(userId: UserID): Promise<void> {

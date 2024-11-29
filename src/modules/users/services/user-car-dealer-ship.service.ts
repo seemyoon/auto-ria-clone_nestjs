@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
-import { IUserData } from '../../../auth/interfaces/user-data.interface';
-import { FileTypeEnum } from '../../../file-storage/enum/file-type.enum';
-import { FileStorageService } from '../../../file-storage/services/file-storage.service';
-import { UserRepository } from '../../../repository/service/user.repository';
+import { IUserData } from '../../auth/interfaces/user-data.interface';
+import { FileTypeEnum } from '../../file-storage/enum/file-type.enum';
+import { FileStorageService } from '../../file-storage/services/file-storage.service';
+import { UserRepository } from '../../repository/service/user.repository';
 
 @Injectable()
-export class SellerCarDealerShipService {
+export class UserCarDealerShipService {
   constructor(
     private readonly fileStorageService: FileStorageService,
     private readonly userRepository: UserRepository,
@@ -39,4 +39,14 @@ export class SellerCarDealerShipService {
   public async subscribe(dto: any): Promise<void> {}
 
   public async unsubscribe(): Promise<void> {}
+
+  public async createMechanic(dto: any): Promise<void> {}
+
+  public async createManager(dto: any): Promise<void> {}
+
+  public async createAdmin(dto: any): Promise<void> {}
+
+  public async editAdmin(userId: string, dto: any): Promise<void> {}
+
+  public async getAdmin(userId: string): Promise<void> {}
 }

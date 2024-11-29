@@ -22,11 +22,15 @@ export class ReportAfter3ChangesEntity {
 
   @Column()
   article_id: ArticleID;
-  @OneToOne(() => ArticleEntity, (entity) => entity.report_after_3_changes)
+  @OneToOne(() => ArticleEntity, (entity) => entity.report_after_3_changes, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'article_id' })
   article?: ArticleEntity;
 
-  @ManyToOne(() => ReportEntity, (report) => report.changesAfter3TimesReports)
+  @ManyToOne(() => ReportEntity, (report) => report.changesAfter3TimesReports, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'report_id' })
   report: ReportEntity;
 }

@@ -5,6 +5,7 @@ import { BaseUserReqDto } from '../../../../users/models/req/base-user.req.dto';
 
 export class BaseAuthReqDto extends PickType(BaseUserReqDto, [
   'email',
+  'phoneNumber',
   'password',
   'role',
   'image',
