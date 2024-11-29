@@ -8,6 +8,7 @@ import { JwtAccessGuard } from './guards/jwt-access.guard';
 import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
 import { AuthService } from './services/auth.service';
 import { AuthCacheService } from './services/auth-cache.service';
+import { PasswordService } from './services/password.service';
 import { TokenService } from './services/token.service';
 
 @Module({
@@ -22,6 +23,7 @@ import { TokenService } from './services/token.service';
     AuthService,
     AuthCacheService,
     TokenService,
+    PasswordService,
   ],
   exports: [],
 })

@@ -18,7 +18,9 @@ export class SubscribeEntity extends CreateUpdateModel {
 
   @Column()
   user_id: UserID;
-  @OneToOne(() => UserEntity, (entity) => entity.subscribe)
+  @OneToOne(() => UserEntity, (entity) => entity.subscribe, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'user_id' })
   user?: UserEntity;
 }

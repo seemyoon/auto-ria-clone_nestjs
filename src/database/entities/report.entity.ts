@@ -29,7 +29,9 @@ export class ReportEntity {
 
   @Column()
   user_id: UserID;
-  @ManyToOne(() => UserEntity, (entity) => entity.reports)
+  @ManyToOne(() => UserEntity, (entity) => entity.reports, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'user_id' })
   user?: UserEntity;
 

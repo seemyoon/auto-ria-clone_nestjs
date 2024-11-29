@@ -51,23 +51,31 @@ export class ArticleEntity extends CreateUpdateModel {
 
   @Column()
   user_id: UserID;
-  @ManyToOne(() => UserEntity, (entity) => entity.articles)
+  @ManyToOne(() => UserEntity, (entity) => entity.articles, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'user_id' })
   user?: UserEntity;
 
   @Column()
   car_id: CarID;
-  @ManyToOne(() => CarEntity, (entity) => entity.articles)
+  @ManyToOne(() => CarEntity, (entity) => entity.articles, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'car_id' })
   car?: CarEntity;
 
   @Column()
   region_id: RegionID;
-  @ManyToOne(() => RegionEntity, (entity) => entity.articles)
+  @ManyToOne(() => RegionEntity, (entity) => entity.articles, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'region_id' })
   region?: RegionEntity;
 
-  @OneToOne(() => ReportAfter3ChangesEntity, (entity) => entity.article)
+  @OneToOne(() => ReportAfter3ChangesEntity, (entity) => entity.article, {
+    onDelete: 'CASCADE',
+  })
   report_after_3_changes?: ArticleEntity;
 
   @Column({ default: 0 })

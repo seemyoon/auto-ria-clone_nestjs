@@ -5,6 +5,7 @@ import {
   IsIn,
   IsNotIn,
   IsOptional,
+  IsPhoneNumber,
   IsString,
   Length,
   Matches,
@@ -26,6 +27,11 @@ export class BaseUserReqDto {
   @Length(0, 300)
   @Matches(/^[^\s@]+@([^\s@.,]+\.)+[^\s@.,]{2,}$/)
   email: string;
+
+  @ApiProperty({ example: '+380631353945' })
+  @IsString()
+  @IsPhoneNumber(null, { message: 'Phone number must be valid' })
+  phoneNumber: string;
 
   @ApiProperty({ example: '123qweQWE' })
   @IsNotIn(['password', '123456789', 'qwerty'])

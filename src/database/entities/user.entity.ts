@@ -8,7 +8,6 @@ import {
 
 import { UserID } from '../../common/types/entity-ids.type';
 import { BannedEnum } from '../../modules/users/enum/banned.enum';
-import { SellerEnum } from '../../modules/users/enum/seller.enum';
 import { UserEnum } from '../../modules/users/enum/users.enum';
 import { TableNameEnum } from '../enums/table-name.enum';
 import { CreateUpdateModel } from '../models/create-update.model';
@@ -27,6 +26,12 @@ export class UserEntity extends CreateUpdateModel {
 
   @Column('text')
   name: string;
+
+  @Column('text')
+  phoneNumber: string;
+
+  @Column('boolean', { default: false })
+  isTemporaryPassword: boolean;
 
   @Column('text', { select: false })
   password: string;

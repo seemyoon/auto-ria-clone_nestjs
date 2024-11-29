@@ -5,6 +5,8 @@ import { CurrentUser } from '../decorators/current-user.decorator';
 import { SkipAuth } from '../decorators/skip-auth.decorator';
 import { JwtRefreshGuard } from '../guards/jwt-refresh.guard';
 import { IUserData } from '../interfaces/user-data.interface';
+import { ChangePasswordReqDto } from '../models/dto/request/change-password.req.dto';
+import { ChangeTemporaryPasswordReqDto } from '../models/dto/request/change-temporary-password.req.dto';
 import { SignInReqDto } from '../models/dto/request/sign-in.req.dto';
 import { SignUpReqDto } from '../models/dto/request/sign-up.req.dto';
 import { AuthResDto } from '../models/dto/response/auth.res.dto';
@@ -42,5 +44,31 @@ export class AuthController {
     @CurrentUser() userData: IUserData,
   ): Promise<TokenPairResDto> {
     return await this.authService.refreshToken(userData);
+  }
+
+  // @SkipAuth()
+  // @ApiBearerAuth()
+  // @Post('forgotPassword')
+  // public async forgotPasswordSendEmail(
+  //   @CurrentUser() userData: IUserData,
+  //   @Body() dto: ForgotPasswordReqDto,
+  // ): Promise<void> {
+  //   await this.authService.forgotPasswordSendEmail(userData, dto);
+  // } //todo forgot password
+
+  @ApiBearerAuth()
+  @Post('changePassword')
+  public async changePassword(
+    @CurrentUser() userData: IUserData,
+    @Body() dto: ChangePasswordReqDto,
+  ): Promise<void> {
+    await this.authService.changePassword(userData, dto);
+  }
+
+  @Post('changeTemporaryPassword')
+  public async changeTemporaryPassword(
+    @Body() dto: ChangeTemporaryPasswordReqDto,
+  ): Promise<void> {
+    await this.authService.changeTemporaryPassword(dto);
   }
 }

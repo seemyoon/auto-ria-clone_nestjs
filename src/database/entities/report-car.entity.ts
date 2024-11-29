@@ -22,7 +22,9 @@ export class ReportCarEntity {
   @Column({ nullable: true })
   model?: string;
 
-  @ManyToOne(() => ReportEntity, (report) => report.carReports)
+  @ManyToOne(() => ReportEntity, (report) => report.carReports, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'report_id' })
   report: ReportEntity;
 }
