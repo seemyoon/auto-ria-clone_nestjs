@@ -1,62 +1,86 @@
-AutoRia Clone - NestJS Backend
-Description
+# AutoRia Clone - NestJS Backend
+### Description
 This project is a backend clone of AutoRia built using the NestJS framework.
 
-Project setup
+## Project setup
 To set up the project, run:
+```bash
 $ npm install
+```
 
-Run the project
+## Run the project
 Development
 To run the project in development mode, use:
+```bash
 $ npm run start
+```
 
-Watch mode
+## Watch mode
 To run the project in watch mode, use:
+```bash
 $ npm run start:local
+```
 
-Debug mode
+## Debug mode
 To run the project in debug mode, use:
+```bash
 $ npm run start:debug
+```
 
-Production mode
+## Production mode
 To run the project in production mode, use:
+```bash
 $ npm run start:prod
+```
 
-Docker setup
+## Docker setup
 Build and start containers (local)
 To build and start Docker containers for local development, use:
+```bash
 $ npm run start:docker:local
+```
 
-Migrations
+## Migrations
 Create a migration
 To create a new migration, use:
+```bash
 $ npm run migration:create --name=MigrationName
+```
 
-Generate a migration
+## Generate a migration
 To generate a new migration based on changes in entities, use:
+```bash
 $ npm run migration:generate --name=MigrationName
+```
 
-Run migrations
+## Run migrations
 To run all pending migrations, use:
+```bash
 $ npm run migration:run
+```
 
-Revert the last migration
+## Revert the last migration
 To revert the last migration, use:
+```bash
 $ npm run migration:revert
+```
 
-Husky
+## Husky
 Husky is used for managing git hooks to ensure code quality before commits. It runs linting on staged files.
 
-To set up Husky, use:
+## To set up Husky, use:
+```bash
 $ npm run prepare
+```
 
-Run end-to-end tests
+## Run end-to-end tests
 To run end-to-end tests, use:
+```bash
 $ npm run test:e2e
+```
 
-License
+## License
 This project is UNLICENSED.
 
-Author
-Oleksandr Semenets
+## Author
+[Oleksandr Semenets](https://www.linkedin.com/in/alexandrsemenets/)
