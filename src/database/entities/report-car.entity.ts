@@ -1,20 +1,20 @@
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
-  ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import { ReportID } from '../../common/types/entity-ids.type';
+import { ReportCarID } from '../../common/types/entity-ids.type';
 import { TableNameEnum } from '../enums/table-name.enum';
 import { ReportEntity } from './report.entity';
 
 @Entity(TableNameEnum.REPORT_CAR)
 export class ReportCarEntity {
   @PrimaryGeneratedColumn('uuid')
-  id: ReportID;
+  id: ReportCarID;
 
   @Column({ nullable: true })
   brand?: string;
@@ -22,7 +22,10 @@ export class ReportCarEntity {
   @Column({ nullable: true })
   model?: string;
 
-  @ManyToOne(() => ReportEntity, (report) => report.carReports, {
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @OneToOne(() => ReportEntity, (report) => report.carReport, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'report_id' })

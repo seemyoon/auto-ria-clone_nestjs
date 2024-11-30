@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { Brackets, DataSource, Repository } from 'typeorm';
 
 import { ArticleID } from '../../../common/types/entity-ids.type';
@@ -104,11 +104,23 @@ export class ArticleRepository extends Repository<ArticleEntity> {
     return qb?.monthlyViews || 0;
   }
 
-  public async getAvgPriceInRegion(regionId: ArticleID): Promise<number> {
-    const qb = await this.createQueryBuilder('articles')
-      .select('ROUND(AVG(cost), 2)', 'avgPriceInRegion')
-      .andWhere('articles.region_id = :regionId', { regionId }) //todo getAvgPriceInRegion, decide with avg
+  public async getAvgPriceInRegion(articleId: ArticleID): Promise<number> {
+    const article = await this.findOne({
+      where: { id: articleId },
+      relations: ['region'], //todo change
+    });
+
+    if (!article || !article.region) {
+      throw new BadRequestException('Article or its region not found');
+    }
+
+    const regionId = article.region.id;
+
+    const qb = await this.createQueryBuilder('article')
+      .select('ROUND(AVG(article.cost), 2)', 'avgPriceInRegion')
+      .where('article.region_id = :regionId', { regionId })
       .getRawOne();
+
     return qb?.avgPriceInRegion || 0;
   }
 

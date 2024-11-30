@@ -88,6 +88,10 @@ export class ArticleService {
         throw new BadRequestException('Invalid user role');
     }
 
+    // await this.checkForSwearWords(dto.title);
+    // await this.checkForSwearWords(dto.description);
+    // await this.checkForSwearWords(dto.body);
+
     const region = await this.regionRepository.findOneBy({ place: dto.place });
     if (!region) {
       throw new BadRequestException('Region not found');
@@ -283,4 +287,20 @@ export class ArticleService {
       throw new ConflictException('Subscription not found');
     }
   }
+
+  // private async checkForSwearWords(text: string): Promise<void> {
+  //   const swearWords = JSON.parse(
+  //     await fs.readFile(
+  //       path.resolve(__dirname, '../../../json/swear_words.json'),
+  //       'utf-8',
+  //     ),
+  //   );
+  //   const foundSwearWords = swearWords.filter((word: string) =>
+  //     text.includes(word),
+  //   );
+  //
+  //   if (foundSwearWords.length > 0) {
+  //     throw new ConflictException('Article contains inappropriate language.');
+  //   }
+  // } // todo change list and dist
 }

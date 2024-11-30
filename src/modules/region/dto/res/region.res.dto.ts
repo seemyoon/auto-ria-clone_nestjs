@@ -5,7 +5,7 @@ import { RegionID } from '../../../../common/types/entity-ids.type';
 export class RegionResDto {
   @ApiProperty({
     example: '6744s24-5a28-a363-a5e1-023ae2e4780f',
-    description: 'CarRegion ID',
+    description: 'Region ID',
   })
   id: RegionID;
 

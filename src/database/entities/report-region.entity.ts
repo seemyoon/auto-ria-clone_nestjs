@@ -1,24 +1,28 @@
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
-  ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import { ReportID } from '../../common/types/entity-ids.type';
+import { ReportRegionID } from '../../common/types/entity-ids.type';
 import { TableNameEnum } from '../enums/table-name.enum';
 import { ReportEntity } from './report.entity';
 
 @Entity(TableNameEnum.REPORT_REGION)
 export class ReportRegionEntity {
   @PrimaryGeneratedColumn('uuid')
-  id: ReportID;
+  id: ReportRegionID;
 
   @Column()
   region: string;
 
-  @ManyToOne(() => ReportEntity, (report) => report.regionReports, {
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @OneToOne(() => ReportEntity, (report) => report.regionReport, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'report_id' })

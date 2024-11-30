@@ -1,8 +1,8 @@
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
-  ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -28,7 +28,10 @@ export class ReportAfter3ChangesEntity {
   @JoinColumn({ name: 'article_id' })
   article?: ArticleEntity;
 
-  @ManyToOne(() => ReportEntity, (report) => report.changesAfter3TimesReports, {
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @OneToOne(() => ReportEntity, (report) => report.changesAfter3TimesReport, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'report_id' })

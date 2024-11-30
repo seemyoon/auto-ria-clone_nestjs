@@ -5,6 +5,7 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -35,15 +36,15 @@ export class ReportEntity {
   @JoinColumn({ name: 'user_id' })
   user?: UserEntity;
 
-  @OneToMany(() => ReportCarEntity, (reportCar) => reportCar.report)
-  carReports: ReportCarEntity[];
+  @OneToOne(() => ReportCarEntity, (reportCar) => reportCar.report)
+  carReport: ReportCarEntity;
 
-  @OneToMany(() => ReportRegionEntity, (reportRegion) => reportRegion.report)
-  regionReports: ReportRegionEntity[];
+  @OneToOne(() => ReportRegionEntity, (reportRegion) => reportRegion.report)
+  regionReport: ReportRegionEntity;
 
-  @OneToMany(
+  @OneToOne(
     () => ReportAfter3ChangesEntity,
     (report3Changes) => report3Changes.report,
   )
-  changesAfter3TimesReports: ReportAfter3ChangesEntity[];
+  changesAfter3TimesReport: ReportAfter3ChangesEntity;
 }
