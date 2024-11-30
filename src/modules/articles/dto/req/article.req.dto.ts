@@ -1,8 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
-import { IsInt, IsString, Length } from 'class-validator';
+import { IsEnum, IsInt, IsString, Length } from 'class-validator';
 
 import { TransformHelper } from '../../../../common/helpers/transform.helper';
+import { CurrencyEnum } from '../../../price/enum/currency.enum';
 
 export class BaseArticleReqDto {
   @ApiProperty({
@@ -46,6 +47,9 @@ export class BaseArticleReqDto {
     description: 'Price of the car',
   })
   cost: number;
+
+  @IsEnum(CurrencyEnum)
+  currency: CurrencyEnum;
 
   @Type(() => String)
   @IsString()

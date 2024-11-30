@@ -1,6 +1,7 @@
 import { ApiProperty, OmitType } from '@nestjs/swagger';
-import { IsInt, IsOptional, IsString, Length } from 'class-validator';
+import { IsEnum, IsInt, IsOptional, IsString, Length } from 'class-validator';
 
+import { CurrencyEnum } from '../../../price/enum/currency.enum';
 import { BaseArticleReqDto } from './article.req.dto';
 
 export class UpdateArticleReqDto extends OmitType(BaseArticleReqDto, []) {
@@ -42,6 +43,9 @@ export class UpdateArticleReqDto extends OmitType(BaseArticleReqDto, []) {
   })
   @IsInt()
   cost?: number;
+
+  @IsEnum(CurrencyEnum)
+  currency: CurrencyEnum;
 
   @IsOptional()
   @ApiProperty({

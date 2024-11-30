@@ -1,7 +1,5 @@
-import * as fs from 'node:fs/promises';
-import * as path from 'node:path';
-
 import { BadRequestException, Injectable } from '@nestjs/common';
+import * as regionsArray from 'src/json/ua_cities.json';
 
 import { RegionID } from '../../../common/types/entity-ids.type';
 import { RegionEntity } from '../../../database/entities/region.entity';
@@ -32,18 +30,11 @@ export class RegionService {
     }
     const regionsInDB = await this.regionRepository.find();
 
-    const regions = JSON.parse(
-      await fs.readFile(
-        path.resolve(__dirname, '../../../json/ua_cities.json'),
-        'utf-8',
-      ),
-    );
-
-    if (regionsInDB.length < regions.length) {
+    if (regionsInDB.length < regionsArray.length) {
       const existingCities = regionsInDB.map((region: RegionEntity) =>
         region.place.toLowerCase(),
       );
-      const newRegions = regions
+      const newRegions = regionsArray
         .filter(
           (newRegion: any): boolean =>
             !existingCities.includes(newRegion.city.toLowerCase()),

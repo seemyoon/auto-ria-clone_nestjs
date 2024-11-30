@@ -16,6 +16,7 @@ import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 import { SkipAuth } from '../../auth/decorators/skip-auth.decorator';
 import { IUserData } from '../../auth/interfaces/user-data.interface';
 import { ListUsersQueryDto } from '../../users/models/req/list-users.query.dto';
+import { ActiveOrInactiveReqUserDto } from '../dto/req/active-or-inactive-req-user.dto';
 import { BaseArticleReqDto } from '../dto/req/article.req.dto';
 import { UpdateArticleReqDto } from '../dto/req/update-article.req.dto';
 import { ArticleApproveEditPendingResDto } from '../dto/res/article-approve.res.dto';
@@ -37,6 +38,20 @@ export class ArticlesController {
   ): Promise<ArticleListResDto> {
     const [entities, total] = await this.articleService.getArticles(query);
     return ArticleMapper.toResDtoList(entities, total, query);
+  }
+
+  @ApiBearerAuth()
+  @Patch(':articleId/activeOrInactive')
+  public async activeOrInactiveArticle(
+    @CurrentUser() userData: IUserData,
+    @Param('articleId', ParseUUIDPipe) articleId: ArticleID,
+    @Body() dto: ActiveOrInactiveReqUserDto,
+  ): Promise<void> {
+    await this.articleService.activeOrInactiveArticle(
+      articleId,
+      dto.isActiveArticleEnum,
+      userData,
+    );
   }
 
   @ApiBearerAuth()

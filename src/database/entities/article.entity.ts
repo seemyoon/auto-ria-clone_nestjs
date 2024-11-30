@@ -13,6 +13,7 @@ import {
   RegionID,
   UserID,
 } from '../../common/types/entity-ids.type';
+import { CurrencyEnum } from '../../modules/price/enum/currency.enum';
 import { SellerEnum } from '../../modules/users/enum/seller.enum';
 import { isActiveArticleEnum } from '../enums/is-active-article.enum';
 import { TableNameEnum } from '../enums/table-name.enum';
@@ -41,6 +42,15 @@ export class ArticleEntity extends CreateUpdateModel {
 
   @Column({ type: 'int', default: 0 })
   cost: number;
+
+  @Column('enum', { enum: CurrencyEnum })
+  currency: CurrencyEnum;
+
+  @Column('int', { default: 0 })
+  costUAH: number;
+
+  @Column('text')
+  currencyRate: number;
 
   @Column({ type: 'int', default: 0 })
   views: number;

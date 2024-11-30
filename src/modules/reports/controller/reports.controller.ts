@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 import {
@@ -87,6 +95,36 @@ export class ReportsController {
     return ReportMapper.toReportRegionResDto(
       await this.reportsService.getReportRegion(userData, reportRegionId),
     );
+  }
+
+  @Delete(':reportAfter3ChangesId')
+  public async deleteReportAfter3ChangesEntity(
+    @CurrentUser() userData: IUserData,
+    @Param('reportAfter3ChangesId')
+    reportAfter3ChangesId: ReportAfter3ChangesID,
+  ): Promise<void> {
+    await this.reportsService.deleteReportAfter3Changes(
+      userData,
+      reportAfter3ChangesId,
+    );
+  }
+
+  @Delete(':reportCarId')
+  public async deleteReportCarId(
+    @CurrentUser() userData: IUserData,
+    @Param('reportCarId')
+    reportCarId: ReportCarID,
+  ): Promise<void> {
+    await this.reportsService.deleteReportCar(userData, reportCarId);
+  }
+
+  @Delete(':reportRegionId')
+  public async deleteReportRegion(
+    @CurrentUser() userData: IUserData,
+    @Param('reportRegionId')
+    reportRegionId: ReportRegionID,
+  ): Promise<void> {
+    await this.reportsService.deleteReportRegion(userData, reportRegionId);
   }
 
   // @Post('approve/:id')

@@ -1,10 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
-import { IsInt } from 'class-validator';
+import { IsEnum, IsInt } from 'class-validator';
 
 import { TransformHelper } from '../../../../common/helpers/transform.helper';
 import { isActiveArticleEnum } from '../../../../database/enums/is-active-article.enum';
 import { CarResDto } from '../../../cars/dto/res/car.res.dto';
+import { CurrencyEnum } from '../../../price/enum/currency.enum';
 import { RegionResDto } from '../../../region/dto/res/region.res.dto';
 import { SellerEnum } from '../../../users/enum/seller.enum';
 
@@ -42,6 +43,9 @@ export class ArticleBaseResDto {
     description: 'Price of the car',
   })
   cost: number;
+
+  @IsEnum(CurrencyEnum)
+  currency: CurrencyEnum;
 
   @ApiProperty({
     enum: isActiveArticleEnum,

@@ -5,7 +5,6 @@ export type Config = {
   database: DatabaseConfig;
   redis: RedisConfig;
   aws: AWSConfig;
-  sentry: SentryConfig;
   jwt: JwtConfig;
 };
 
@@ -34,11 +33,7 @@ export type AWSConfig = {
   ACL: ObjectCannedACL;
   endpoint: string;
 };
-export type SentryConfig = {
-  dsn: string;
-  env: string;
-  debug: boolean;
-};
+
 export type JwtConfig = {
   accessSecret: string;
   accessExpireIn: number;

@@ -105,18 +105,6 @@ export class UserController {
     await this.userService.unsubscribe(userData);
   }
 
-  //@ApiBearerAuth()
-  // @Patch('editSeller')
-  // public async editSeller(
-  //   @CurrentUser() userData: IUserData,
-  //   @Param('articleId', ParseUUIDPipe) userId: UserID,
-  //   @Body() dto: UpdateReqUserDto,
-  // ): Promise<UserResDto> {
-  //   return UserMapper.toResDto(
-  //     await this.userService.editSeller(userData, userId, dto),
-  //   );
-  // } //
-
   @ApiBearerAuth()
   @Post('createUser')
   public async createUser(

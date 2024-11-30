@@ -119,6 +119,51 @@ export class ReportsService {
     return await this.reportCarRepository.findOneBy({ id: reportCarId });
   }
 
+  public async deleteReportAfter3Changes(
+    userData: IUserData,
+    reportAfter3ChangesId: ReportAfter3ChangesID,
+  ): Promise<void> {
+    await this.isAdminOrManager(userData.userId);
+    const report = await this.reportAfter3ChangesRepository.findOneBy({
+      id: reportAfter3ChangesId,
+    });
+
+    if (!report) {
+      throw new BadRequestException('Report not found');
+    }
+    await this.reportAfter3ChangesRepository.remove(report);
+  }
+
+  public async deleteReportRegion(
+    userData: IUserData,
+    reportRegionId: ReportRegionID,
+  ): Promise<void> {
+    await this.isAdminOrManager(userData.userId);
+    const report = await this.reportRegionRepository.findOneBy({
+      id: reportRegionId,
+    });
+
+    if (!report) {
+      throw new BadRequestException('Report not found');
+    }
+    await this.reportRegionRepository.remove(report);
+  }
+
+  public async deleteReportCar(
+    userData: IUserData,
+    reportCarId: ReportCarID,
+  ): Promise<void> {
+    await this.isAdminOrManager(userData.userId);
+    const report = await this.reportCarRepository.findOneBy({
+      id: reportCarId,
+    });
+
+    if (!report) {
+      throw new BadRequestException('Report not found');
+    }
+    await this.reportCarRepository.remove(report);
+  }
+
   private async isAdminOrManager(userId: UserID): Promise<void> {
     const user = await this.userRepository.findOneBy({ id: userId });
     if (!user) {
@@ -128,40 +173,4 @@ export class ReportsService {
       throw new BadRequestException('you do not have access rights');
     }
   }
-
-  // public async approveReport(
-  //   userData: IUserData,
-  //   reportId: ReportID,
-  // ): Promise<void> {
-  //   const user = await this.userRepository.findOneBy({ id: userData.userId });
-  //   if (![UserEnum.ADMIN, UserEnum.MANAGER].includes(user.role)) {
-  //     throw new BadRequestException(
-  //       'Only admins and managers can approve reports',
-  //     );
-  //   }
-  //
-  //   const report = await this.reportRepository.findOneBy({ id: reportId });
-  //   if (!report) {
-  //     throw new BadRequestException('Report not found');
-  //   }
-  //
-  //   switch (report.type) {
-  //     case ReportEnum.APPROVE_ADD_BRAND_OR_MODEL_AUTO:
-  //       const reportCar = await this.reportRepository.getReportCar(reportId);
-  //       await this.reportCarRepository.save(reportCar);
-  //       break;
-  //     case ReportEnum.APPROVE_ADD_REGION:
-  //       const reportRegion =
-  //         await this.reportRepository.getReportRegion(reportId);
-  //       await this.reportRegionRepository.save(reportRegion);
-  //       break;
-  //     case ReportEnum.APPROVE_CHANGE_AD_AUTO_MORE_THAN_3_TIMES:
-  //       const reportAfter3Changes =
-  //         await this.reportRepository.getReportAfter3Changes(reportId);
-  //       await this.reportAfter3ChangesRepository.save(reportAfter3Changes);
-  //       break;
-  //     default:
-  //       throw new BadRequestException('Invalid report type');
-  //   }
-  // }
 }

@@ -1,9 +1,11 @@
 import { Module } from '@nestjs/common';
 
-import { PriceService } from './services/price.service';
+import { RedisModule } from '../redis/redis.module';
+import { ConverterPriceService } from './services/converter-price.service';
+import { CurrencyService } from './services/currency.service';
 
 @Module({
-  providers: [PriceService],
-  exports: [PriceService],
+  imports: [RedisModule],
+  providers: [ConverterPriceService, CurrencyService],
 })
 export class PriceModule {}

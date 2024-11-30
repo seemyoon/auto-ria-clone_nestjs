@@ -24,6 +24,7 @@ export class ArticleMapper {
       seller: data.user ? UserMapper.toResDto(data.user) : null,
       car: data.car ? CarMapper.toResDto(data.car) : null,
       cost: data.cost,
+      currency: data.currency,
       region: data.region ? RegionMapper.toResDto(data.region) : null,
       // profanityCheck
     };

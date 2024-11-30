@@ -112,7 +112,7 @@ export class UserService {
     const user = await this.returnedUserOrThrow(userId);
 
     if (![UserEnum.ADMIN, UserEnum.MANAGER].includes(user.role)) {
-      throw new ConflictException('You can not ban admin or manager');
+      throw new ConflictException('You can not ban');
     }
 
     user.isBanned = isBanned;

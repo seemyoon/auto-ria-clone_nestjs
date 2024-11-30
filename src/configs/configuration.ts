@@ -29,11 +29,6 @@ export default (): Config => ({
     ACL: process.env.AWS_S3_ACL as ObjectCannedACL,
     endpoint: process.env.AWS_S3_ENDPOINT,
   },
-  sentry: {
-    dsn: process.env.SENTRY_DSN,
-    env: process.env.SENTRY_ENV,
-    debug: process.env.SENTRY_DEBUG === 'true',
-  },
   jwt: {
     accessSecret: process.env.ACCESS_SECRET,
     accessExpireIn: parseInt(process.env.ACCESS_EXPIREIN, 10) || 3600000,
