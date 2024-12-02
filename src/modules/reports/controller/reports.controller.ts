@@ -60,7 +60,7 @@ export class ReportsController {
     await this.reportsService.addRegionReport(userData, dto);
   }
 
-  @Get(':reportAfter3ChangesId')
+  @Get('after-3-changes/:reportAfter3ChangesId')
   public async getReportAfter3ChangesEntity(
     @CurrentUser() userData: IUserData,
     @Param('reportAfter3ChangesId')
@@ -72,7 +72,7 @@ export class ReportsController {
     );
   }
 
-  @Get(':reportCarId')
+  @Get('car/:reportCarId')
   public async getReportCarId(
     @CurrentUser() userData: IUserData,
     @Param('reportCarId')
@@ -81,7 +81,7 @@ export class ReportsController {
     return await this.reportsService.getReportCar(userData, reportCarId);
   }
 
-  @Get(':reportRegionId')
+  @Get('region/:reportRegionId')
   public async getReportRegion(
     @CurrentUser() userData: IUserData,
     @Param('reportRegionId')
@@ -90,7 +90,7 @@ export class ReportsController {
     return await this.reportsService.getReportRegion(userData, reportRegionId);
   }
 
-  @Delete(':reportAfter3ChangesId')
+  @Delete('after-3-changes/:reportAfter3ChangesId')
   public async deleteReportAfter3ChangesEntity(
     @CurrentUser() userData: IUserData,
     @Param('reportAfter3ChangesId')
@@ -102,7 +102,7 @@ export class ReportsController {
     );
   }
 
-  @Delete(':reportCarId')
+  @Delete('car/:reportCarId')
   public async deleteReportCarId(
     @CurrentUser() userData: IUserData,
     @Param('reportCarId')
@@ -111,7 +111,8 @@ export class ReportsController {
     await this.reportsService.deleteReportCar(userData, reportCarId);
   }
 
-  @Delete(':reportRegionId')
+  @ApiBearerAuth()
+  @Delete('region/:reportRegionId')
   public async deleteReportRegion(
     @CurrentUser() userData: IUserData,
     @Param('reportRegionId')
