@@ -8,6 +8,25 @@ To set up the project, run:
 $ npm install
 ```
 
+## Create local.env file
+To set up the project, run:
+```bash
+POSTGRES_HOST=localhost
+POSTGRES_PORT=5432
+POSTGRES_USER=postgresuser
+POSTGRES_PASSWORD=postgrespassword
+POSTGRES_DB=autoRia-clone
+
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_PASSWORD=redispassword
+
+AWS_ACCESS_KEY=awsackey
+AWS_SECRET_KEY=awssekey
+AWS_S3_REGION="us-west-1"
+AWS_S3_BUCKET_NAME="bucket-autoria-clone"
+```
+
 ## Run the project with watch mode
 To run the project in watch mode, use:
 ```bash
