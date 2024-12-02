@@ -37,7 +37,7 @@ export class ArticleEntity extends CreateUpdateModel {
   @Column('text', { nullable: true })
   body?: string;
 
-  @Column({ type: 'enum', enum: SellerEnum, default: SellerEnum.SELLER })
+  @Column({ type: 'enum', enum: SellerEnum, nullable: true })
   sellerType?: SellerEnum;
 
   @Column({ type: 'int', default: 0 })

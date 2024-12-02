@@ -51,7 +51,7 @@ export class RegionController {
     await this.regionService.uploadRegions(userData);
   }
 
-  @SkipAuth() //todo @SkipAuth()
+  @SkipAuth()
   @Get(':regionId')
   public async getRegion(
     @Param('regionId', ParseUUIDPipe) regionId: RegionID,
