@@ -8,14 +8,7 @@ To set up the project, run:
 $ npm install
 ```
 
-## Run the project
-Development
-To run the project in development mode, use:
-```bash
-$ npm run start
-```
-
-## Watch mode
+## Run the project with watch mode
 To run the project in watch mode, use:
 ```bash
 $ npm run start:local
@@ -65,19 +58,6 @@ To revert the last migration, use:
 $ npm run migration:revert
 ```
 
-## Husky
-Husky is used for managing git hooks to ensure code quality before commits. It runs linting on staged files.
-
-## To set up Husky, use:
-```bash
-$ npm run prepare
-```
-
-## Run end-to-end tests
-To run end-to-end tests, use:
-```bash
-$ npm run test:e2e
-```
 
 ## License
 This project is UNLICENSED.
