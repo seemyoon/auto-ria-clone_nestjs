@@ -9,7 +9,7 @@ $ npm install
 ```
 
 ## Create local.env file
-To set up the project, run:
+To do local.env file with following settings:
 ```bash
 POSTGRES_HOST=localhost
 POSTGRES_PORT=5432
