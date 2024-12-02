@@ -14,6 +14,7 @@ export class ReportAfter3ChangesRepository extends Repository<ReportAfter3Change
     reportAfter3ChangesId: ReportAfter3ChangesID,
   ): Promise<ReportAfter3ChangesEntity> {
     const qb = this.createQueryBuilder('reportAfter3Changes')
+      .leftJoinAndSelect('reportAfter3Changes.report', 'report')
       .leftJoinAndSelect('reportAfter3Changes.article', 'article')
       .where('reportAfter3Changes.id = :reportAfter3ChangesId', {
         reportAfter3ChangesId,

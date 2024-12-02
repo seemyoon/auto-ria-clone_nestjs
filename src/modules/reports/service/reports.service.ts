@@ -10,6 +10,8 @@ import { ReportEntity } from '../../../database/entities/report.entity';
 import { IUserData } from '../../auth/interfaces/user-data.interface';
 import { CarReqDto } from '../../cars/dto/req/car.req.dto';
 import { RegionReqDto } from '../../region/dto/req/region.req.dto';
+import { CarRepository } from '../../repository/service/car.repository';
+import { RegionRepository } from '../../repository/service/region.repository';
 import { ReportRepository } from '../../repository/service/report.repository';
 import { ReportAfter3ChangesRepository } from '../../repository/service/report-after-3-changes.repository';
 import { ReportCarRepository } from '../../repository/service/report-car.repository';
@@ -28,6 +30,8 @@ export class ReportsService {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly reportRepository: ReportRepository,
+    private readonly carRepository: CarRepository,
+    private readonly regionRepository: RegionRepository,
     private readonly reportCarRepository: ReportCarRepository,
     private readonly reportAfter3ChangesRepository: ReportAfter3ChangesRepository,
     private readonly reportRegionRepository: ReportRegionRepository,
@@ -48,6 +52,14 @@ export class ReportsService {
     const user = await this.userRepository.findOneBy({ id: userData.userId });
     if (![UserEnum.SELLER, UserEnum.DEALERSHIP_SELLER].includes(user.role)) {
       throw new BadRequestException('Only sellers can add car reports');
+    }
+
+    const carIsExist = await this.carRepository.findOneBy({
+      model: dto.model,
+      brand: dto.brand,
+    });
+    if (carIsExist) {
+      throw new BadRequestException('Car already exists');
     }
 
     if (!dto.brand && !dto.model) {
@@ -79,6 +91,13 @@ export class ReportsService {
 
     if (!dto.region) {
       throw new BadRequestException('Region is required');
+    }
+
+    const regionIsExist = await this.regionRepository.findOneBy({
+      place: dto.region,
+    });
+    if (regionIsExist) {
+      throw new BadRequestException('Region already exists');
     }
 
     const report = this.reportRepository.create({
@@ -117,9 +136,8 @@ export class ReportsService {
     reportRegionId: ReportRegionID,
   ): Promise<RegionReportsResDto> {
     await this.isAdminOrManager(userData.userId);
-    const regionReport = await this.reportRegionRepository.findOneBy({
-      id: reportRegionId,
-    });
+    const regionReport =
+      await this.reportRegionRepository.findReportRegionById(reportRegionId);
 
     if (!regionReport) {
       throw new BadRequestException('Report not found');
@@ -133,9 +151,9 @@ export class ReportsService {
     reportCarId: ReportCarID,
   ): Promise<CarReportsResDto> {
     await this.isAdminOrManager(userData.userId);
-    const carReport = await this.reportCarRepository.findOneBy({
-      id: reportCarId,
-    });
+    const carReport =
+      await this.reportCarRepository.findReportCarById(reportCarId);
+
     if (!carReport) {
       throw new BadRequestException('Report not found');
     }
