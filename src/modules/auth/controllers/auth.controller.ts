@@ -54,7 +54,7 @@ export class AuthController {
   //   @Body() dto: ForgotPasswordReqDto,
   // ): Promise<void> {
   //   await this.authService.forgotPasswordSendEmail(userData, dto);
-  // } //todo forgot password
+  // }
 
   @ApiBearerAuth()
   @Post('changePassword')

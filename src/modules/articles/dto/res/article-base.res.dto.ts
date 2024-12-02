@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
-import { IsEnum, IsInt } from 'class-validator';
+import { IsBoolean, IsEnum, IsInt } from 'class-validator';
 
 import { TransformHelper } from '../../../../common/helpers/transform.helper';
 import { isActiveArticleEnum } from '../../../../database/enums/is-active-article.enum';
@@ -34,6 +34,11 @@ export class ArticleBaseResDto {
   })
   body: string;
 
+  @ApiProperty({
+    description: 'Region associated with the article',
+    type: RegionResDto,
+    required: false,
+  })
   region?: RegionResDto;
 
   @Transform(TransformHelper.toTrim)
@@ -44,31 +49,61 @@ export class ArticleBaseResDto {
   })
   cost: number;
 
+  @IsBoolean()
+  @ApiProperty({
+    example: true,
+  })
+  profanityCheck: boolean;
+
   @IsEnum(CurrencyEnum)
+  @ApiProperty({
+    enum: CurrencyEnum,
+    example: CurrencyEnum.USD,
+    description: 'Currency of the price',
+  })
   currency: CurrencyEnum;
+
+  @ApiProperty({
+    example: 5600000,
+    description: 'Price in UAH',
+  })
+  costUAH: number;
+
+  @ApiProperty({
+    example: 28,
+    description: 'Currency rate at the time of article creation',
+  })
+  currencyRate: number;
 
   @ApiProperty({
     enum: isActiveArticleEnum,
     example: isActiveArticleEnum.ACTIVE,
+    description: 'Status of the article',
   })
   status: isActiveArticleEnum;
 
   @ApiProperty({
     example: '2021-09-29T10:00:00.000Z',
-    description: 'Created field',
+    description: 'Creation date of the article',
   })
   created: Date;
 
   @ApiProperty({
     example: '2021-09-29T10:00:00.000Z',
-    description: 'Updated field',
+    description: 'Last update date of the article',
   })
   updated: Date;
 
-  @ApiProperty({ enum: SellerEnum, example: SellerEnum.SELLER })
+  @ApiProperty({
+    enum: SellerEnum,
+    example: SellerEnum.SELLER,
+    description: 'Type of seller',
+  })
   sellerType?: SellerEnum;
 
+  @ApiProperty({
+    description: 'Car associated with the article',
+    type: CarResDto,
+  })
   car?: CarResDto;
-
-  // profanityCheck?: boolean;
 }

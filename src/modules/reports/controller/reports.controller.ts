@@ -12,7 +12,6 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import {
   ReportAfter3ChangesID,
   ReportCarID,
-  ReportID,
   ReportRegionID,
 } from '../../../common/types/entity-ids.type';
 import { CurrentUser } from '../../auth/decorators/current-user.decorator';
@@ -67,11 +66,9 @@ export class ReportsController {
     @Param('reportAfter3ChangesId')
     reportAfter3ChangesId: ReportAfter3ChangesID,
   ): Promise<ChangesAfter3TimesReportsResDto> {
-    return ReportMapper.toChangesAfter3TimesResDto(
-      await this.reportsService.getReportAfter3Changes(
-        userData,
-        reportAfter3ChangesId,
-      ),
+    return await this.reportsService.getReportAfter3Changes(
+      userData,
+      reportAfter3ChangesId,
     );
   }
 
@@ -81,9 +78,7 @@ export class ReportsController {
     @Param('reportCarId')
     reportCarId: ReportCarID,
   ): Promise<CarReportsResDto> {
-    return ReportMapper.toReportCarResDto(
-      await this.reportsService.getReportCar(userData, reportCarId),
-    );
+    return await this.reportsService.getReportCar(userData, reportCarId);
   }
 
   @Get(':reportRegionId')
@@ -92,9 +87,7 @@ export class ReportsController {
     @Param('reportRegionId')
     reportRegionId: ReportRegionID,
   ): Promise<RegionReportsResDto> {
-    return ReportMapper.toReportRegionResDto(
-      await this.reportsService.getReportRegion(userData, reportRegionId),
-    );
+    return await this.reportsService.getReportRegion(userData, reportRegionId);
   }
 
   @Delete(':reportAfter3ChangesId')

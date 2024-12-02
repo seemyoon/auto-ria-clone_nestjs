@@ -10,5 +10,4 @@ export enum TableNameEnum {
   REPORT_CAR = 'report_car',
   REPORT_REGION = 'report_region',
   REPORT_AFTER_3_CHANGES = 'report_after_3_changes',
-  PRICE = 'price',
 }

@@ -99,7 +99,11 @@ export class UserService {
     await this.refreshTokenRepository.delete({ user_id: userData.userId });
   }
 
-  public async getSeller(userId: UserID): Promise<UserEntity> {
+  public async getSeller(
+    userId: UserID,
+    userData: IUserData,
+  ): Promise<UserEntity> {
+    await this.isAdminOrManager(userData.userId);
     return await this.returnedUserOrThrow(userId);
   }
 

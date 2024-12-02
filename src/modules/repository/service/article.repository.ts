@@ -107,7 +107,7 @@ export class ArticleRepository extends Repository<ArticleEntity> {
   public async getAvgPriceInRegion(articleId: ArticleID): Promise<number> {
     const article = await this.findOne({
       where: { id: articleId },
-      relations: ['region'], //todo change
+      relations: ['region'],
     });
 
     if (!article || !article.region) {

@@ -7,14 +7,16 @@ import {
 import { PriceHelper } from '../../../common/helpers/price.helper';
 import { ArticleID, UserID } from '../../../common/types/entity-ids.type';
 import { ArticleEntity } from '../../../database/entities/article.entity';
+import { ReportEntity } from '../../../database/entities/report.entity';
 import { UserEntity } from '../../../database/entities/user.entity';
 import { isActiveArticleEnum } from '../../../database/enums/is-active-article.enum';
-import { ArticleValidator } from '../../../validator/article.validator';
 import { IUserData } from '../../auth/interfaces/user-data.interface';
 import { CurrencyService } from '../../price/services/currency.service';
+import { ReportEnum } from '../../reports/enum/report.enum';
 import { ArticleRepository } from '../../repository/service/article.repository';
 import { CarRepository } from '../../repository/service/car.repository';
 import { RegionRepository } from '../../repository/service/region.repository';
+import { ReportRepository } from '../../repository/service/report.repository';
 import { ReportAfter3ChangesRepository } from '../../repository/service/report-after-3-changes.repository';
 import { SubscribeRepository } from '../../repository/service/subscribe.repository';
 import { UserRepository } from '../../repository/service/user.repository';
@@ -26,6 +28,7 @@ import { UpdateArticleReqDto } from '../dto/req/update-article.req.dto';
 import { ArticleApproveEditPendingResDto } from '../dto/res/article-approve.res.dto';
 import { ArticleSellerPremiumResDto } from '../dto/res/article-seller-premium.res.dto';
 import { ArticleMapper } from '../mapper/article.mapper';
+import { ArticleValidator } from '../validator/article.validator';
 
 @Injectable()
 export class ArticleService {
@@ -37,6 +40,7 @@ export class ArticleService {
     private readonly userRepository: UserRepository,
     private readonly subscribeRepository: SubscribeRepository,
     private readonly reportAfter3ChangesRepository: ReportAfter3ChangesRepository,
+    private readonly reportRepository: ReportRepository,
   ) {}
 
   public async getArticles(
@@ -120,9 +124,9 @@ export class ArticleService {
       currencyRate: currencyRate,
       costUAH: costUAH,
       sellerType: sellerType,
-      user_id: userData.userId,
-      car_id: car.id,
-      region_id: region.id,
+      user,
+      car,
+      region,
     });
 
     const savedArticle = await this.articleRepository.save(result);
@@ -225,6 +229,20 @@ export class ArticleService {
       );
     }
 
+    const region = await this.regionRepository.findOneBy({ place: dto.place });
+    if (!region) {
+      throw new BadRequestException('Region not found');
+    }
+
+    const car = await this.carRepository.findOneBy({
+      brand: dto.brand,
+      model: dto.model,
+    });
+    if (!car) {
+      throw new BadRequestException(
+        'Your car is not on the list? Please send your request to the manager for approval (refer to another endpoint)',
+      );
+    }
     const currencyRate = await this.currencyService.getCurrency(dto.currency);
     const costUAH = await PriceHelper.convertInUAH(
       dto.currency,
@@ -232,46 +250,32 @@ export class ArticleService {
       this.currencyService,
     );
 
-    const updateFields: Partial<ArticleEntity> = {};
+    article.title = dto.title;
+    article.description = dto.description;
+    article.body = dto.body;
+    article.cost = dto.cost;
+    article.currencyRate = currencyRate;
+    article.costUAH = costUAH;
+    article.user = user;
+    article.car = car;
+    article.region = region;
 
-    if (dto.title) updateFields.title = dto.title;
-    if (dto.description) updateFields.description = dto.description;
-    if (dto.body) updateFields.body = dto.body;
-    if (dto.cost) updateFields.cost = dto.cost;
-
-    if (dto?.place) {
-      const region = await this.regionRepository.findOneBy({
-        place: dto.place,
-      });
-
-      if (region) {
-        updateFields['region_id'] = region.id;
-      } else {
-        throw new BadRequestException('Region not found');
-      }
-    }
-
-    if (dto?.brand || dto?.model) {
-      const car = await this.carRepository.updateCar(dto);
-      if (!car) {
-        throw new BadRequestException('Car not found');
-      }
-
-      updateFields['car_id'] = car.id;
-    }
     article.changesCount += 1;
 
-    await this.articleRepository.save({
-      ...article,
-      ...updateFields,
-      currencyRate,
-      costUAH,
-    });
-
     if (article.changesCount >= 3) {
-      await this.reportAfter3ChangesRepository.save(
-        this.reportAfter3ChangesRepository.create({ article_id: articleId }),
-      );
+      const report = new ReportEntity();
+      report.type = ReportEnum.APPROVE_CHANGE_AD_AUTO_MORE_THAN_3_TIMES;
+      report.user_id = user.id;
+
+      await this.reportRepository.save(report);
+
+      const reportAfter3Changes = this.reportAfter3ChangesRepository.create({
+        article_id: articleId,
+        report: report,
+      });
+
+      await this.reportAfter3ChangesRepository.save(reportAfter3Changes);
+
       article.status = isActiveArticleEnum.INACTIVE;
       await this.articleRepository.save(article);
 
@@ -285,8 +289,9 @@ export class ArticleService {
       article,
       this.articleRepository,
     );
+    await this.articleRepository.save(article);
 
-    return await this.articleRepository.findOneBy({ id: articleId });
+    return article;
   }
 
   public async activeOrInactiveArticle(

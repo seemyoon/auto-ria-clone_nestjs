@@ -48,6 +48,9 @@ export class BaseArticleReqDto {
   })
   cost: number;
 
+  @ApiProperty({
+    example: 'UAH',
+  })
   @IsEnum(CurrencyEnum)
   currency: CurrencyEnum;
 

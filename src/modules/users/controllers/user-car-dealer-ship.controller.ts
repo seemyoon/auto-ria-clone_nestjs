@@ -100,18 +100,8 @@ export class UserCarDealerShipController {
   }
 
   @ApiOperation({ deprecated: true })
-  @Get()
-  public async getAdmin(
-    @Param('id', ParseUUIDPipe) userId: string,
-  ): Promise<void> {
-    await this.userCarDealerShipService.getAdmin(userId);
-  }
-
-  @ApiOperation({ deprecated: true })
-  @Post()
+  @Post('createAdminCarD')
   public async createAdmin(@Body() dto: any): Promise<void> {
     await this.userCarDealerShipService.createAdmin(dto);
   }
-
-  //toDo thinking about subscribe and unsubscribe for car-dealer-ship sellers
 }

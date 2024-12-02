@@ -24,9 +24,11 @@ export class ArticleMapper {
       seller: data.user ? UserMapper.toResDto(data.user) : null,
       car: data.car ? CarMapper.toResDto(data.car) : null,
       cost: data.cost,
+      currencyRate: data.currencyRate,
+      costUAH: data.costUAH,
       currency: data.currency,
       region: data.region ? RegionMapper.toResDto(data.region) : null,
-      // profanityCheck
+      profanityCheck: data.status === 'ACTIVE',
     };
   }
 

@@ -7,9 +7,6 @@ import {
   UserID,
 } from '../../../common/types/entity-ids.type';
 import { ReportEntity } from '../../../database/entities/report.entity';
-import { ReportAfter3ChangesEntity } from '../../../database/entities/report-after-3-changes.entity';
-import { ReportCarEntity } from '../../../database/entities/report-car.entity';
-import { ReportRegionEntity } from '../../../database/entities/report-region.entity';
 import { IUserData } from '../../auth/interfaces/user-data.interface';
 import { CarReqDto } from '../../cars/dto/req/car.req.dto';
 import { RegionReqDto } from '../../region/dto/req/region.req.dto';
@@ -20,7 +17,11 @@ import { ReportRegionRepository } from '../../repository/service/report-region.r
 import { UserRepository } from '../../repository/service/user.repository';
 import { UserEnum } from '../../users/enum/users.enum';
 import { ListReportsQueryDto } from '../dto/req/list-reports.query.dto';
+import { CarReportsResDto } from '../dto/res/car-reports.res.dto';
+import { ChangesAfter3TimesReportsResDto } from '../dto/res/changes-after-3-times-reports.res.dto';
+import { RegionReportsResDto } from '../dto/res/region-reports.res.dto';
 import { ReportEnum } from '../enum/report.enum';
+import { ReportMapper } from '../mapper/report.mapper';
 
 @Injectable()
 export class ReportsService {
@@ -96,27 +97,49 @@ export class ReportsService {
   public async getReportAfter3Changes(
     userData: IUserData,
     reportAfter3ChangesId: ReportAfter3ChangesID,
-  ): Promise<ReportAfter3ChangesEntity> {
+  ): Promise<ChangesAfter3TimesReportsResDto> {
     await this.isAdminOrManager(userData.userId);
-    return await this.reportAfter3ChangesRepository.findOneBy({
-      id: reportAfter3ChangesId,
-    });
+
+    const reportAfter3Changes =
+      await this.reportAfter3ChangesRepository.findReportAfter3ChangesById(
+        reportAfter3ChangesId,
+      );
+
+    if (!reportAfter3Changes) {
+      throw new BadRequestException('Report not found');
+    }
+
+    return ReportMapper.toChangesAfter3TimesResDto(reportAfter3Changes);
   }
 
   public async getReportRegion(
     userData: IUserData,
     reportRegionId: ReportRegionID,
-  ): Promise<ReportRegionEntity> {
+  ): Promise<RegionReportsResDto> {
     await this.isAdminOrManager(userData.userId);
-    return await this.reportRegionRepository.findOneBy({ id: reportRegionId });
+    const regionReport = await this.reportRegionRepository.findOneBy({
+      id: reportRegionId,
+    });
+
+    if (!regionReport) {
+      throw new BadRequestException('Report not found');
+    }
+
+    return ReportMapper.toReportRegionResDto(regionReport);
   }
 
   public async getReportCar(
     userData: IUserData,
     reportCarId: ReportCarID,
-  ): Promise<ReportCarEntity> {
+  ): Promise<CarReportsResDto> {
     await this.isAdminOrManager(userData.userId);
-    return await this.reportCarRepository.findOneBy({ id: reportCarId });
+    const carReport = await this.reportCarRepository.findOneBy({
+      id: reportCarId,
+    });
+    if (!carReport) {
+      throw new BadRequestException('Report not found');
+    }
+    return ReportMapper.toReportCarResDto(carReport);
   }
 
   public async deleteReportAfter3Changes(

@@ -179,7 +179,6 @@ export class AuthService {
     if (!user) {
       throw new ConflictException('User not found');
     }
-    //todo arr of old passwords to store all previous user passwords,
 
     await this.checkOldPassword(dto.oldPassword, user.password);
 

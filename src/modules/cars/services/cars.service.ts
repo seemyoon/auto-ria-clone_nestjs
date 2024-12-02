@@ -36,6 +36,8 @@ export class CarsService {
   ): Promise<CarEntity> {
     await this.isUserOrManager(userData.userId);
 
+    await this.existingCar(dto.brand, dto.model);
+
     const car = await this.returnedCarOrThrow(carId);
 
     if (dto.brand) {
@@ -62,12 +64,26 @@ export class CarsService {
   ): Promise<CarEntity> {
     await this.isUserOrManager(userData.userId);
 
+    await this.existingCar(dto.brand, dto.model);
+
     return await this.carRepository.save(
       this.carRepository.create({
         brand: dto.brand,
         model: dto.model,
       }),
     );
+  }
+
+  private async existingCar(brand: string, model: string): Promise<void> {
+    const existingCar = await this.carRepository.findOne({
+      where: { brand: brand, model: model },
+    });
+
+    if (existingCar) {
+      throw new ConflictException(
+        'Car with this brand and model already exists',
+      );
+    }
   }
 
   private async returnedCarOrThrow(carId: CarID): Promise<CarEntity> {

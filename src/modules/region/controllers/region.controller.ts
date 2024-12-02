@@ -36,8 +36,11 @@ export class RegionController {
 
   @ApiBearerAuth()
   @Post()
-  public async createRegion(@Body() dto: RegionReqDto): Promise<void> {
-    await this.regionService.createRegion(dto);
+  public async createRegion(
+    @CurrentUser() userData: IUserData,
+    @Body() dto: RegionReqDto,
+  ): Promise<void> {
+    await this.regionService.createRegion(userData, dto);
   }
 
   @ApiBearerAuth()

@@ -1,4 +1,18 @@
 services:
+  app:
+    build:
+      context: .
+    ports:
+      - "3100:5000"
+    env_file:
+      - local.env
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    restart: on-failure
+    command: >
+      sh -c "node src/app.js"
+
   autoRia-clone-postgres:
     image: postgres:16.1
     ports:

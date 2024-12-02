@@ -43,13 +43,13 @@ export class ArticleEntity extends CreateUpdateModel {
   @Column({ type: 'int', default: 0 })
   cost: number;
 
-  @Column('enum', { enum: CurrencyEnum })
+  @Column('enum', { enum: CurrencyEnum, nullable: true })
   currency: CurrencyEnum;
 
   @Column('int', { default: 0 })
   costUAH: number;
 
-  @Column('text')
+  @Column({ type: 'int', default: 0 })
   currencyRate: number;
 
   @Column({ type: 'int', default: 0 })

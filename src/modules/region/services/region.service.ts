@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import * as regionsArray from 'src/json/ua_cities.json';
+import regionsArray from 'src/json/ua_cities.json';
 
 import { RegionID } from '../../../common/types/entity-ids.type';
 import { RegionEntity } from '../../../database/entities/region.entity';
@@ -50,7 +50,7 @@ export class RegionService {
         'Missing cities have been successfully loaded into the database.',
       );
     } else {
-      console.log('All cities are already loaded.'); //todo try/catch
+      console.log('All cities are already loaded.');
     }
   }
 
@@ -62,7 +62,14 @@ export class RegionService {
     return region;
   }
 
-  public async createRegion(dto: RegionReqDto): Promise<RegionEntity> {
+  public async createRegion(
+    userData: IUserData,
+    dto: RegionReqDto,
+  ): Promise<RegionEntity> {
+    const user = await this.userRepository.findOneBy({ id: userData.userId });
+    if (![UserEnum.ADMIN, UserEnum.MANAGER].includes(user.role)) {
+      throw new BadRequestException('Invalid role');
+    }
     const regionsInDB = await this.regionRepository.find();
     const existingCities = regionsInDB.map((region: RegionEntity) =>
       region.place.toLowerCase(),

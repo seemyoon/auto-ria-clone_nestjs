@@ -79,7 +79,7 @@ export class ArticlesController {
   @Delete(':articleId')
   public async deleteArticle(
     @CurrentUser() userData: IUserData,
-    @Param('id', ParseUUIDPipe) articleId: ArticleID,
+    @Param('articleId', ParseUUIDPipe) articleId: ArticleID,
   ): Promise<void> {
     await this.articleService.deleteArticle(articleId, userData);
   }
@@ -88,7 +88,7 @@ export class ArticlesController {
   @Patch(':articleId')
   public async editArticle(
     @CurrentUser() userData: IUserData,
-    @Param('id', ParseUUIDPipe) articleId: ArticleID,
+    @Param('articleId', ParseUUIDPipe) articleId: ArticleID,
     @Body() dto: UpdateArticleReqDto,
   ): Promise<ArticleSellerBaseResDto | ArticleApproveEditPendingResDto> {
     const result = await this.articleService.editArticle(
@@ -98,7 +98,6 @@ export class ArticlesController {
     );
 
     if ('message' in result) {
-      //todo pay attention
       return result;
     }
     return ArticleMapper.toBaseResDto(result);

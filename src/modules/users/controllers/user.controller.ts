@@ -139,11 +139,14 @@ export class UserController {
     await this.userService.banOrUnbanUser(userId, dto.isBanned, userData);
   }
 
-  @SkipAuth()
+  @ApiBearerAuth()
   @Get(':userId')
   public async getSeller(
+    @CurrentUser() userData: IUserData,
     @Param('userId', ParseUUIDPipe) userId: UserID,
   ): Promise<UserResDto> {
-    return UserMapper.toResDto(await this.userService.getSeller(userId));
+    return UserMapper.toResDto(
+      await this.userService.getSeller(userId, userData),
+    );
   }
 }
